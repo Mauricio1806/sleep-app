@@ -15,4 +15,5 @@ export const STORAGE_KEYS = {
   SETTINGS: '@sleepapp:settings',
   DAILY_INSIGHT: '@sleepapp:daily_insight',
   USER_ID: '@sleepapp:user_id',
+  MEMORY_INTENTIONS: '@sleepapp:memory_intentions',
 } as const;

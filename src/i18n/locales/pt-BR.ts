@@ -1,7 +1,7 @@
 export const ptBR = {
   welcome: {
     title: 'Durma melhor,\nviva melhor.',
-    subtitle: 'Seu plano de sono personalizado com IA, feito para você.',
+    subtitle: 'Seu plano de sono personalizado com seu coach, feito para você.',
     cta: 'Começar agora',
     disclaimer: 'Gratuito para começar. Sem cartão de crédito.',
   },
@@ -23,7 +23,7 @@ export const ptBR = {
   goals: {
     title: 'O que você quer\nmelhorar?',
     subtitle: 'Escolha pelo menos um objetivo',
-    cta: 'Gerar meu plano com IA →',
+    cta: 'Gerar meu plano →',
     goalTitles: {
       fall_faster: 'Adormecer mais rápido',
       less_wakeups: 'Menos acordadas noturnas',
@@ -51,7 +51,7 @@ export const ptBR = {
       'Finalizando suas recomendações...',
     ],
     planReady: '✨ Seu plano está pronto!',
-    summaryLabel: 'Resumo da IA',
+    summaryLabel: 'Resumo personalizado',
     soundLabel: 'Som recomendado',
     dayLabel: 'Dia',
     lockedDays: 'Dias 4-14 — Premium',
@@ -158,6 +158,18 @@ export const ptBR = {
     apiError: 'Não foi possível conectar ao servidor. Verifique sua conexão.',
     networkError: 'Sem conexão com a internet.',
     parseError: 'Erro ao processar resposta. Tente novamente.',
+  },
+  memory: {
+    title: 'Memória do Sono',
+    intentionTitle: 'Intenção para esta noite',
+    intentionPlaceholder: 'O que você pretende fazer diferente esta noite?',
+    saveBtn: 'Salvar intenção',
+    morningTitle: 'Revisão matinal',
+    rememberedBtn: 'Lembrei e fiz',
+    forgotBtn: 'Esqueci',
+    streakLabel: 'dias com intenção',
+    tipLabel: 'Dica científica',
+    historyTitle: 'Últimos 7 dias',
   },
 };
 

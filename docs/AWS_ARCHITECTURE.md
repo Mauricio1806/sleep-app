@@ -81,3 +81,66 @@ CloudFront Origins:
 - [ ] VPC não necessária (stateless, sem acesso a DB)
 - [ ] Timeout máximo 35s (proteção contra custos)
 - [ ] Sem logs de conteúdo de usuários (apenas erros)
+
+---
+
+## EC2 Backend — Express + Claude API Proxy
+
+### Arquitetura atual com EC2
+
+```
+[App React Native]
+       │
+       ├─ AsyncStorage (local, offline-first)
+       │
+       ├─ HTTPS ──► [EC2 t3.micro]
+       │                │ Express + PM2 (cluster 2 instâncias)
+       │                │ Nginx (reverse proxy)
+       │                └─► [Anthropic API — Claude claude-sonnet-4-5]
+       │
+       └─ HTTPS direta ──► [S3 — sons ambientes (16 MP3)]
+```
+
+### Endpoints disponíveis
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | /api/v1/health | Status e uptime |
+| POST | /api/v1/sleep/plan | Gerar plano de sono |
+| POST | /api/v1/sleep/insight | Insight diário |
+| POST | /api/v1/sleep/adjust | Ajuste semanal do plano |
+| POST | /api/v1/memory/consolidation-tip | Dica de memória e sono |
+
+### Custo por fase
+
+| Fase | Usuários | Instância | Custo/mês |
+|------|----------|-----------|-----------|
+| MVP | 0–500 | t3.micro | ~$8 |
+| Fase 2 | 500–2k | t3.small | ~$17 |
+| Fase 3 | 2k–10k | t3.medium + RDS | ~$33 + $15 |
+| Escala | 10k+ | Auto Scaling + RDS Multi-AZ | variável |
+
+### Deploy
+
+```bash
+# 1. Configurar EC2 (rodar uma vez)
+bash infrastructure/scripts/setup-ec2.sh
+
+# 2. Deploy do código
+bash infrastructure/scripts/deploy-ec2.sh EC2_IP KEY.pem
+
+# 3. Verificar
+curl http://EC2_IP/health
+```
+
+### Migração do app (TODO-AWS-EC2)
+
+Nos arquivos do app, procure por `TODO-AWS-EC2` para encontrar onde trocar as chamadas diretas à Claude API pelas chamadas ao EC2:
+
+```typescript
+// Antes (direto à Anthropic):
+fetch('https://api.anthropic.com/v1/messages', ...)
+
+// Depois (via EC2):
+fetch('http://EC2_IP/api/v1/sleep/plan', { body: { profile } })
+```

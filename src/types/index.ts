@@ -84,3 +84,10 @@ export interface SoundOption {
   isPremium: boolean;
   emoji: string;
 }
+
+export interface MemoryIntention {
+  id: string;
+  date: string;
+  intention: string;
+  result: 'remembered' | 'forgot' | null;
+}

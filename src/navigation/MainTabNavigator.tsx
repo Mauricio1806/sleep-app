@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Svg, { Path, Circle, Rect, Line } from 'react-native-svg';
+import Svg, { Path, Circle, Line } from 'react-native-svg';
 import { HomeScreen } from '../screens/HomeScreen';
 import { SoundPlayerScreen } from '../screens/SoundPlayerScreen';
 import { SleepTrackerScreen } from '../screens/SleepTrackerScreen';
-import { HistoryScreen } from '../screens/HistoryScreen';
+import { MemoryScreen } from '../screens/MemoryScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { colors } from '../../theme';
 
@@ -37,12 +37,11 @@ function MoonIcon({ color }: { color: string }) {
   );
 }
 
-function ChartIcon({ color }: { color: string }) {
+function BrainIcon({ color }: { color: string }) {
   return (
     <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-      <Rect x={3} y={12} width={4} height={9} rx={1} stroke={color} strokeWidth={1.8} />
-      <Rect x={10} y={7} width={4} height={14} rx={1} stroke={color} strokeWidth={1.8} />
-      <Rect x={17} y={3} width={4} height={18} rx={1} stroke={color} strokeWidth={1.8} />
+      <Path d="M12 4C10.07 4 8.43 5.19 7.75 6.87C6.27 6.28 4.5 7.28 4.5 9C4.5 9.55 4.67 10.05 4.96 10.47C4.18 10.94 3.5 11.86 3.5 13C3.5 14.66 4.84 16 6.5 16V18H17.5V16C19.16 16 20.5 14.66 20.5 13C20.5 11.86 19.82 10.94 19.04 10.47C19.33 10.05 19.5 9.55 19.5 9C19.5 7.28 17.73 6.28 16.25 6.87C15.57 5.19 13.93 4 12 4Z" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+      <Line x1={12} y1={4} x2={12} y2={18} stroke={color} strokeWidth={1.5} strokeLinecap="round" />
     </Svg>
   );
 }
@@ -80,7 +79,7 @@ export function MainTabNavigator() {
           ),
         }}
       />
-      <Tab.Screen name="Histórico" component={HistoryScreen} options={{ tabBarIcon: ({ color }) => <ChartIcon color={color} /> }} />
+      <Tab.Screen name="Memória" component={MemoryScreen} options={{ tabBarIcon: ({ color }) => <BrainIcon color={color} /> }} />
       <Tab.Screen name="Perfil" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <PersonIcon color={color} /> }} />
     </Tab.Navigator>
   );

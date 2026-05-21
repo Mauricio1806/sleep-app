@@ -1,7 +1,7 @@
 export const esPE = {
   welcome: {
     title: 'Duerma mejor,\nviva mejor.',
-    subtitle: 'Su plan de sueño personalizado con IA, hecho para usted.',
+    subtitle: 'Su plan de sueño personalizado con su coach, hecho para usted.',
     cta: 'Comenzar ahora',
     disclaimer: 'Gratis para comenzar. Sin tarjeta de crédito.',
   },
@@ -23,7 +23,7 @@ export const esPE = {
   goals: {
     title: '¿Qué quiere\nmejorar?',
     subtitle: 'Elija al menos un objetivo',
-    cta: 'Generar mi plan con IA →',
+    cta: 'Generar mi plan →',
     goalTitles: {
       fall_faster: 'Dormirse más rápido',
       less_wakeups: 'Menos despertares',
@@ -51,7 +51,7 @@ export const esPE = {
       'Finalizando sus recomendaciones...',
     ],
     planReady: '✨ ¡Su plan está listo!',
-    summaryLabel: 'Resumen de IA',
+    summaryLabel: 'Resumen personalizado',
     soundLabel: 'Sonido recomendado',
     dayLabel: 'Día',
     lockedDays: 'Días 4-14 — Premium',
@@ -158,5 +158,17 @@ export const esPE = {
     apiError: 'No pudimos conectar al servidor. Verifique su conexión.',
     networkError: 'Sin conexión a internet.',
     parseError: 'Error al procesar la respuesta. Intente de nuevo.',
+  },
+  memory: {
+    title: 'Memoria del Sueño',
+    intentionTitle: 'Su intención para esta noche',
+    intentionPlaceholder: '¿Qué planea hacer diferente esta noche?',
+    saveBtn: 'Guardar intención',
+    morningTitle: 'Revisión matinal',
+    rememberedBtn: 'Lo recordé y lo hice',
+    forgotBtn: 'Lo olvidé',
+    streakLabel: 'días con intención',
+    tipLabel: 'Dato científico',
+    historyTitle: 'Últimos 7 días',
   },
 };

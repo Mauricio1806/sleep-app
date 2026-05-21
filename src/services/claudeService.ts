@@ -74,6 +74,7 @@ function validateSleepPlan(obj: unknown): SleepPlan {
   };
 }
 
+// TODO-AWS-EC2: substituir por http://EC2_IP/api/v1/sleep/plan
 export async function generateSleepPlan(profile: SleepProfile): Promise<SleepPlan> {
   const systemPrompt = `Você é um especialista acolhedor em higiene do sono e bem-estar.
 Crie planos personalizados de melhora do sono em português brasileiro, com linguagem simples e encorajadora.
@@ -110,6 +111,7 @@ Inclua todos os 14 dias no array days.`;
   return validateSleepPlan(parsed);
 }
 
+// TODO-AWS-EC2: substituir por http://EC2_IP/api/v1/sleep/insight
 export async function generateDailyInsight(record: SleepRecord): Promise<DailyInsight> {
   const systemPrompt = `Você é um coach de sono empático. Analise registros de sono e forneça insights motivadores em português brasileiro.
 Seja específico, prático e encorajador. Nunca seja crítico ou alarmista.
@@ -136,6 +138,7 @@ Responda APENAS com:
   };
 }
 
+// TODO-AWS-EC2: substituir por http://EC2_IP/api/v1/sleep/adjust
 export async function adjustWeeklyPlan(summary: WeeklySummary): Promise<Partial<SleepPlan>> {
   // TODO: Fase 2 — análise semanal completa com ajuste de plano
   const avgScore = summary.averageScore;

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SleepProfile, SleepPlan, SleepRecord, UserSettings, WeeklySummary } from '../types';
+import { SleepProfile, SleepPlan, SleepRecord, UserSettings, WeeklySummary, MemoryIntention } from '../types';
 import { STORAGE_KEYS } from '../config/constants';
 import { calculateSleepScore, calculateSleepDuration, getWeeklyAverage } from '../utils/sleepCalculations';
 
@@ -69,4 +69,26 @@ export async function getSettings(): Promise<UserSettings | null> {
 export async function clearAll(): Promise<void> {
   const keys = Object.values(STORAGE_KEYS) as string[];
   await Promise.all(keys.map(k => AsyncStorage.removeItem(k)));
+}
+
+export async function saveMemoryIntention(intention: MemoryIntention): Promise<void> {
+  const existing = await getMemoryIntentions();
+  const updated = [intention, ...existing.filter(i => i.id !== intention.id)].slice(0, 90);
+  await AsyncStorage.setItem(STORAGE_KEYS.MEMORY_INTENTIONS, JSON.stringify(updated));
+}
+
+export async function getMemoryIntentions(days?: number): Promise<MemoryIntention[]> {
+  const raw = await AsyncStorage.getItem(STORAGE_KEYS.MEMORY_INTENTIONS);
+  if (!raw) return [];
+  const items = JSON.parse(raw) as MemoryIntention[];
+  if (!days) return items;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  return items.filter(i => new Date(i.date) >= cutoff);
+}
+
+export async function updateMemoryResult(id: string, result: 'remembered' | 'forgot'): Promise<void> {
+  const existing = await getMemoryIntentions();
+  const updated = existing.map(i => i.id === id ? { ...i, result } : i);
+  await AsyncStorage.setItem(STORAGE_KEYS.MEMORY_INTENTIONS, JSON.stringify(updated));
 }
