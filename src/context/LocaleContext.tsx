@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserSettings } from '../types';
+import { Region, UserSettings } from '../types';
 
 const LOCALE_KEY = '@sleepapp:settings';
 
@@ -8,15 +8,21 @@ type LocaleValue = UserSettings['language'];
 
 interface LocaleContextType {
   locale: LocaleValue;
-  region: 'BR' | 'MX' | 'AR' | 'CO' | 'CL';
+  region: Region;
   setLocale: (locale: LocaleValue) => Promise<void>;
 }
 
-const localeToRegion: Record<LocaleValue, LocaleContextType['region']> = {
+const localeToRegion: Record<LocaleValue, Region> = {
   'pt-BR': 'BR',
   'es-MX': 'MX',
   'es-AR': 'AR',
   'es-CO': 'CO',
+  'es-CL': 'CL',
+  'es-PE': 'PE',
+  'es-EC': 'EC',
+  'es-VE': 'VE',
+  'es-UY': 'UY',
+  'es-PA': 'PA',
 };
 
 export const LocaleContext = createContext<LocaleContextType>({

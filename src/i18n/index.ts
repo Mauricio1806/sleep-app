@@ -4,12 +4,24 @@ import { ptBR } from './locales/pt-BR';
 import { esMX } from './locales/es-MX';
 import { esAR } from './locales/es-AR';
 import { esCO } from './locales/es-CO';
+import { esCL } from './locales/es-CL';
+import { esPE } from './locales/es-PE';
+import { esEC } from './locales/es-EC';
+import { esVE } from './locales/es-VE';
+import { esUY } from './locales/es-UY';
+import { esPA } from './locales/es-PA';
 
 const translations = {
   'pt-BR': ptBR,
   'es-MX': esMX,
   'es-AR': esAR,
   'es-CO': esCO,
+  'es-CL': esCL,
+  'es-PE': esPE,
+  'es-EC': esEC,
+  'es-VE': esVE,
+  'es-UY': esUY,
+  'es-PA': esPA,
 };
 
 type Locale = keyof typeof translations;

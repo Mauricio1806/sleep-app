@@ -1,4 +1,4 @@
-export const esAR = {
+export const esUY = {
   welcome: {
     title: 'Dormí mejor,\nviví mejor.',
     subtitle: 'Tu plan de sueño personalizado con IA, hecho para vos.',

@@ -52,7 +52,7 @@ export interface WeeklySummary {
 }
 
 export interface UserSettings {
-  language: 'pt-BR' | 'es-MX' | 'es-AR' | 'es-CO';
+  language: 'pt-BR' | 'es-MX' | 'es-AR' | 'es-CO' | 'es-CL' | 'es-PE' | 'es-EC' | 'es-VE' | 'es-UY' | 'es-PA';
   notificationsEnabled: boolean;
   isPremium: boolean;
   onboardingCompleted: boolean;
@@ -68,7 +68,7 @@ export type GoalId =
 
 export type ScoreLabel = 'Excelente' | 'Bom' | 'Regular' | 'Ruim';
 
-export type Region = 'BR' | 'MX' | 'AR' | 'CO' | 'CL';
+export type Region = 'BR' | 'MX' | 'AR' | 'CO' | 'CL' | 'PE' | 'EC' | 'VE' | 'UY' | 'PA';
 
 export interface GoalOption {
   id: GoalId;

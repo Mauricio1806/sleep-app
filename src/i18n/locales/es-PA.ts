@@ -1,17 +1,17 @@
-export const esAR = {
+export const esPA = {
   welcome: {
-    title: 'Dormí mejor,\nviví mejor.',
-    subtitle: 'Tu plan de sueño personalizado con IA, hecho para vos.',
-    cta: 'Empezar ahora',
+    title: 'Duerme mejor,\nvive mejor.',
+    subtitle: 'Tu plan de sueño personalizado con IA, hecho para ti.',
+    cta: 'Comenzar ahora',
     disclaimer: 'Gratis para empezar. Sin tarjeta de crédito.',
   },
   sleepProfile: {
     title: 'Vamos a conocer\ntu sueño',
-    bedtime: '¿A qué hora te acostás?',
-    wakeTime: '¿A qué hora te despertás?',
-    tiredness: '¿Cómo amanecés?',
+    bedtime: '¿A qué hora te acuestas?',
+    wakeTime: '¿A qué hora te despiertas?',
+    tiredness: '¿Cómo amaneces?',
     stress: '¿Nivel de estrés antes de dormir?',
-    caffeine: '¿Tomás cafeína después de las 14h?',
+    caffeine: '¿Consumes cafeína después de las 14h?',
     caffeineYes: 'Sí',
     caffeineNo: 'No',
     screenTime: '¿Tiempo de pantalla antes de dormir?',
@@ -21,8 +21,8 @@ export const esAR = {
     next: 'Continuar',
   },
   goals: {
-    title: '¿Qué querés\nmejorar?',
-    subtitle: 'Elegí al menos un objetivo',
+    title: '¿Qué quieres\nmejorar?',
+    subtitle: 'Elige al menos un objetivo',
     cta: 'Generar mi plan con IA →',
     goalTitles: {
       fall_faster: 'Dormirte más rápido',
@@ -44,7 +44,7 @@ export const esAR = {
   aiPlan: {
     loadingMessages: [
       'Analizando tu perfil de sueño...',
-      'Identificando patrones y desafíos...',
+      'Identificando patrones y retos...',
       'Consultando las mejores técnicas...',
       'Personalizando tu plan...',
       'Seleccionando sonidos ideales...',
@@ -55,10 +55,10 @@ export const esAR = {
     soundLabel: 'Sonido recomendado',
     dayLabel: 'Día',
     lockedDays: 'Días 4-14 — Premium',
-    startCta: 'Empezar mi camino',
+    startCta: 'Comenzar mi viaje',
     premiumCta: 'Ver plan completo — Premium',
     errorTitle: '¡Ups! Algo salió mal',
-    errorSubtitle: 'No pudimos generar tu plan. Intentá de nuevo.',
+    errorSubtitle: 'No pudimos generar tu plan. Intenta de nuevo.',
     retryBtn: 'Intentar de nuevo',
   },
   home: {
@@ -73,7 +73,7 @@ export const esAR = {
     startRoutine: 'Iniciar rutina nocturna',
     lastNight: 'Última noche',
     todayRoutine: 'Rutina de hoy',
-    noRecord: 'Sin registros todavía',
+    noRecord: 'Sin registros aún',
   },
   soundPlayer: {
     title: 'Sonidos para dormir',
@@ -88,7 +88,7 @@ export const esAR = {
     lockedMessage: 'Disponible en Premium',
     volume: 'Volumen',
     noSound: 'Ningún sonido',
-    tapToPlay: 'Tocá para reproducir',
+    tapToPlay: 'Toca para reproducir',
   },
   sleepTracker: {
     title: '¿Cómo fue tu noche?',
@@ -96,10 +96,10 @@ export const esAR = {
     wakeTime: '¿A qué hora te despertaste?',
     wakeups: '¿Cuántas veces te despertaste?',
     quality: '¿Cómo fue la calidad del sueño?',
-    alcohol: '¿Tomaste alcohol?',
-    caffeine: '¿Tomaste cafeína?',
+    alcohol: '¿Consumiste alcohol?',
+    caffeine: '¿Consumiste cafeína?',
     notes: 'Notas (opcional)',
-    notesPlaceholder: '¿Cómo te sentís? ¿Qué pudo afectar tu sueño?',
+    notesPlaceholder: '¿Cómo te sientes? ¿Qué pudo afectar tu sueño?',
     saveCta: 'Guardar registro',
     saved: '¡Registro guardado!',
     insightTitle: 'Insight del día',
@@ -107,8 +107,8 @@ export const esAR = {
   history: {
     title: 'Historial',
     weekAvg: 'Promedio semanal',
-    emptyTitle: 'Sin registros todavía',
-    emptySubtitle: 'Registrá tu sueño para seguir tu evolución',
+    emptyTitle: 'Sin registros aún',
+    emptySubtitle: 'Registra tu sueño para seguir tu evolución',
     emptyCta: 'Registrar ahora',
     exportCta: 'Exportar datos — Próximamente',
     duration: 'Duración',
@@ -140,7 +140,7 @@ export const esAR = {
     accountTitle: 'Cuenta',
     exportLabel: 'Exportar datos',
     preferencesTitle: 'Preferencias',
-    premiumTitle: 'Desbloqueá el Premium',
+    premiumTitle: 'Desbloquea el Premium',
   },
   common: {
     back: 'Volver',
@@ -155,8 +155,8 @@ export const esAR = {
     done: 'Listo',
   },
   errors: {
-    apiError: 'No pudimos conectar al servidor. Verificá tu conexión.',
+    apiError: 'No pudimos conectar al servidor. Verifica tu conexión.',
     networkError: 'Sin conexión a internet.',
-    parseError: 'Error al procesar la respuesta. Intentá de nuevo.',
+    parseError: 'Error al procesar la respuesta. Intenta de nuevo.',
   },
 };
