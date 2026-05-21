@@ -1,8 +1,9 @@
+import Config from 'react-native-config';
 import { SleepProfile, SleepPlan, SleepRecord, DailyInsight, WeeklySummary } from '../types';
 import { CLAUDE_API_URL, CLAUDE_MODEL, MAX_TOKENS, API_TIMEOUT_MS } from '../config/constants';
 
 // TODO-AWS: Trocar CLAUDE_API_URL pela Lambda Function URL e remover Authorization header
-const API_KEY = process.env.ANTHROPIC_API_KEY ?? '';
+const API_KEY = Config.ANTHROPIC_API_KEY ?? '';
 
 async function callClaude(
   systemPrompt: string,

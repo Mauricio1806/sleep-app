@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import TrackPlayer, { usePlaybackState, State } from 'react-native-track-player';
+import Sound from 'react-native-sound';
 import { colors, spacing, typography, sharedStyles, radius } from '../../theme';
 import { SoundCard } from '../components/SoundCard';
 import { SoundOption } from '../types';
 import { useTranslation } from '../i18n';
 import { trackScreen } from '../services/analyticsService';
 
-// TODO-AWS: Substituir URLs placeholder pelos links reais do S3 após upload
+Sound.setCategory('Playback', true);
+
+// TODO-AWS: Replace PLACEHOLDER-S3-URL with real S3 URLs after upload
 const SOUNDS: SoundOption[] = [
   { id: 'rain', name: 'Chuva Suave', url: 'https://PLACEHOLDER-S3-URL/sons/chuva.mp3', isPremium: false, emoji: '🌧️' },
   { id: 'white', name: 'Ruído Branco', url: 'https://PLACEHOLDER-S3-URL/sons/ruido-branco.mp3', isPremium: false, emoji: '⬜' },
@@ -27,49 +29,64 @@ const TIMER_OPTIONS = [
   { label: '60 min', value: 60 },
 ];
 
-let playerReady = false;
-
-async function setupPlayer() {
-  if (playerReady) return;
-  await TrackPlayer.setupPlayer();
-  playerReady = true;
-}
-
 export function SoundPlayerScreen() {
   const { t } = useTranslation();
   const [currentId, setCurrentId] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [timer, setTimer] = useState(0);
+  const soundRef = useRef<Sound | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const playbackState = usePlaybackState();
-
-  const isPlaying = playbackState.state === State.Playing;
 
   useEffect(() => {
     trackScreen('SoundPlayer');
-    setupPlayer();
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      stopCurrent();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function handlePress(sound: SoundOption) {
+  function stopCurrent() {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (soundRef.current) {
+      soundRef.current.stop();
+      soundRef.current.release();
+      soundRef.current = null;
+    }
+    setIsPlaying(false);
+    setCurrentId(null);
+  }
+
+  function handlePress(sound: SoundOption) {
     if (sound.isPremium) return;
     if (currentId === sound.id && isPlaying) {
-      await TrackPlayer.pause();
-      setCurrentId(null);
+      stopCurrent();
       return;
     }
-    await TrackPlayer.reset();
-    await TrackPlayer.add({ id: sound.id, url: sound.url, title: sound.name, artist: 'SleepApp' });
-    await TrackPlayer.play();
-    setCurrentId(sound.id);
-    if (timer > 0) {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(async () => {
-        await TrackPlayer.stop();
-        setCurrentId(null);
-      }, timer * 60 * 1000);
-    }
+    stopCurrent();
+    const s = new Sound(sound.url, '', (error) => {
+      if (error) {
+        // URL is a placeholder — show selected state without audio
+        setCurrentId(sound.id);
+        setIsPlaying(false);
+        return;
+      }
+      s.setNumberOfLoops(-1);
+      s.play((success) => {
+        if (!success) {
+          setIsPlaying(false);
+          setCurrentId(null);
+        }
+      });
+      soundRef.current = s;
+      setCurrentId(sound.id);
+      setIsPlaying(true);
+      if (timer > 0) {
+        timerRef.current = setTimeout(stopCurrent, timer * 60 * 1000);
+      }
+    });
   }
 
   const pairs: [SoundOption, SoundOption | undefined][] = [];
@@ -86,7 +103,7 @@ export function SoundPlayerScreen() {
         {currentId && currentSound && (
           <View style={styles.nowPlaying}>
             <Text style={styles.nowPlayingText}>
-              ▶ {t('soundPlayer.nowPlaying')}: {currentSound.name}
+              {isPlaying ? '▶' : '○'} {t('soundPlayer.nowPlaying')}: {currentSound.name}
             </Text>
           </View>
         )}

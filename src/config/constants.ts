@@ -2,7 +2,7 @@
 export const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 export const CLAUDE_MODEL = 'claude-sonnet-4-5';
 export const MAX_TOKENS = 4096;
-export const API_TIMEOUT_MS = 30000;
+export const API_TIMEOUT_MS = 60000;
 
 export const FREE_SOUNDS_COUNT = 3;
 export const FREE_PLAN_DAYS = 3;
