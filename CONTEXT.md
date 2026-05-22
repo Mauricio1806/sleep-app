@@ -16,15 +16,17 @@ GitHub: https://github.com/Mauricio1806/sleep-app
   - Key: C:\Users\mauri\Videos\data-engineering-workspace\sleep-app-key.pem
 - Supabase: banco de dados (a conectar na Fase 2)
 - RevenueCat: assinaturas (a conectar na Fase 2)
-- Claude API: claude-sonnet-4-5, chave via Config.ANTHROPIC_API_KEY
-  - TODO-AWS-EC2 em claudeService.ts marca cada função para migrar ao EC2
+- Claude API: proxied via EC2 — app não acessa Anthropic diretamente
+  - claudeService.ts aponta para http://13.220.143.229/api/v1/
 
 ## Telas (5 tabs)
 🏠 Home | 🎵 Sons (16 sons, 6 grátis) | 🌙 Registrar | 🧠 Memória | 👤 Perfil
 
 ## Status atual
 MVP funcional rodando no emulador Pixel 7 API 36.
-Onboarding 4 telas OK, Claude API gerando planos OK.
+Onboarding 4 telas OK, planos gerados via EC2 backend (não mais direto à Anthropic).
+claudeService.ts reescrito: postToEC2() → /api/v1/sleep/plan e /api/v1/sleep/insight.
+ANTHROPIC_API_KEY removida do app — fica só no EC2.
 Sons com URLs placeholder S3 (aguardando upload-sounds.ps1).
 react-native-sound substituiu react-native-track-player.
 MemoryScreen.tsx criada: intenção noturna + revisão matinal + dica científica + streak 7 dias.
