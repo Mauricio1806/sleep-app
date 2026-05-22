@@ -10,6 +10,7 @@ import { Button } from '../components/Button';
 import { ProfileContext } from '../context/ProfileContext';
 import { useTranslation } from '../i18n';
 import { trackScreen, trackOnboardingStep } from '../services/analyticsService';
+import * as storageService from '../services/storageService';
 import { SleepProfile } from '../types';
 import { getTodayString } from '../utils/dateHelpers';
 
@@ -39,6 +40,7 @@ export function SleepProfileScreen({ navigation }: Props) {
   const [stressLevel, setStressLevel] = useState(0);
   const [caffeine, setCaffeine] = useState<boolean | null>(null);
   const [screenTime, setScreenTime] = useState('');
+  const draftLoaded = useRef(false);
 
   const op0 = useRef(new Animated.Value(0)).current;
   const op1 = useRef(new Animated.Value(0)).current;
@@ -59,6 +61,17 @@ export function SleepProfileScreen({ navigation }: Props) {
   useEffect(() => {
     trackScreen('SleepProfile');
     trackOnboardingStep(1);
+    storageService.getOnboardingDraft().then(draft => {
+      if (draft) {
+        if (draft.bedtime) setBedtime(draft.bedtime);
+        if (draft.wakeTime) setWakeTime(draft.wakeTime);
+        if (draft.tiredness) setTiredness(draft.tiredness);
+        if (draft.stressLevel) setStressLevel(draft.stressLevel);
+        if (draft.caffeine != null) setCaffeine(draft.caffeine);
+        if (draft.screenTime) setScreenTime(draft.screenTime);
+      }
+      draftLoaded.current = true;
+    });
     opacities.forEach((op, i) => {
       Animated.parallel([
         Animated.timing(op, { toValue: 1, duration: 300, delay: i * 100, useNativeDriver: true }),
@@ -67,6 +80,11 @@ export function SleepProfileScreen({ navigation }: Props) {
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!draftLoaded.current) return;
+    void storageService.saveOnboardingDraft({ bedtime, wakeTime, tiredness, stressLevel, caffeine: caffeine ?? undefined, screenTime: screenTime as SleepProfile['screenTime'] || undefined });
+  }, [bedtime, wakeTime, tiredness, stressLevel, caffeine, screenTime]);
 
   const isValid = tiredness > 0 && stressLevel > 0 && caffeine !== null && screenTime !== '';
 

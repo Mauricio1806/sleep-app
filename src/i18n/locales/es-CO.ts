@@ -159,6 +159,7 @@ export const esCO = {
     apiError: 'No pudimos conectar al servidor. Verifique su conexión.',
     networkError: 'Sin conexión a internet.',
     parseError: 'Error al procesar la respuesta. Intente de nuevo.',
+    timeoutError: 'Tardó demasiado, inténtelo de nuevo.',
   },
   memory: {
     title: 'Memoria del Sueño',

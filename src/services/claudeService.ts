@@ -1,6 +1,15 @@
 import { SleepProfile, SleepPlan, SleepRecord, DailyInsight, WeeklySummary } from '../types';
 import { EC2_BASE_URL, EC2_ENDPOINTS, API_TIMEOUT_MS } from '../config/constants';
 
+export type ApiErrorType = 'network' | 'api' | 'parse' | 'timeout';
+
+export class SleepApiError extends Error {
+  constructor(public readonly type: ApiErrorType, message: string) {
+    super(message);
+    this.name = 'SleepApiError';
+  }
+}
+
 async function postToEC2<T>(endpoint: string, body: unknown): Promise<T> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
@@ -16,13 +25,22 @@ async function postToEC2<T>(endpoint: string, body: unknown): Promise<T> {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      throw new SleepApiError('api', `HTTP ${response.status}`);
     }
 
-    return response.json() as Promise<T>;
+    try {
+      return await response.json() as T;
+    } catch {
+      throw new SleepApiError('parse', 'Resposta inválida do servidor');
+    }
   } catch (err) {
     clearTimeout(timeoutId);
-    throw err;
+    if (err instanceof SleepApiError) throw err;
+    if (err instanceof Error) {
+      if (err.name === 'AbortError') throw new SleepApiError('timeout', 'Tempo limite excedido');
+      throw new SleepApiError('network', err.message);
+    }
+    throw new SleepApiError('network', 'Erro de rede desconhecido');
   }
 }
 

@@ -7,6 +7,7 @@ const { limiter } = require('./middleware/rateLimit');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const sleepRoutes = require('./routes/sleep');
 const memoryRoutes = require('./routes/memory');
+const claudeService = require('./services/claudeService');
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -41,6 +42,10 @@ app.get('/api/v1/health', (req, res) => {
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
   });
+});
+
+app.get('/api/v1/stats', (req, res) => {
+  res.json(claudeService.getStats());
 });
 
 app.use('/api/v1/sleep', sleepRoutes);

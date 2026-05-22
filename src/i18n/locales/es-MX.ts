@@ -159,6 +159,7 @@ export const esMX = {
     apiError: 'No pudimos conectar al servidor. Verifica tu conexión.',
     networkError: 'Sin conexión a internet.',
     parseError: 'Error al procesar respuesta. Intenta de nuevo.',
+    timeoutError: 'Tardó demasiado, inténtalo de nuevo.',
   },
   memory: {
     title: 'Memoria del Sueño',

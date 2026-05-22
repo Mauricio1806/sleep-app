@@ -10,6 +10,7 @@ import { ProfileContext } from '../context/ProfileContext';
 import { useAIPlan } from '../hooks/useAIPlan';
 import { useTranslation } from '../i18n';
 import { trackScreen, trackOnboardingStep } from '../services/analyticsService';
+import * as storageService from '../services/storageService';
 type Props = { navigation: NativeStackNavigationProp<Record<string, undefined>> };
 
 const LOADING_MSG_COUNT = 6;
@@ -17,7 +18,7 @@ const LOADING_MSG_COUNT = 6;
 export function AIPlanScreen({ navigation }: Props) {
   const { t } = useTranslation();
   const { profile, setPlan } = useContext(ProfileContext);
-  const { plan, isLoading, error, generatePlan, retryGeneration } = useAIPlan();
+  const { plan, isLoading, error, errorType, generatePlan, retryGeneration } = useAIPlan();
   const [msgIndex, setMsgIndex] = useState(0);
   const msgOpacity = useRef(new Animated.Value(1)).current;
   const planOpacity = useRef(new Animated.Value(0)).current;
@@ -49,6 +50,7 @@ export function AIPlanScreen({ navigation }: Props) {
   useEffect(() => {
     if (plan) {
       setPlan(plan);
+      void storageService.clearOnboardingDraft();
       Animated.timing(planOpacity, { toValue: 1, duration: 500, useNativeDriver: true }).start();
     }
   }, [plan, setPlan, planOpacity]);
@@ -69,13 +71,17 @@ export function AIPlanScreen({ navigation }: Props) {
   }
 
   if (error || !plan) {
+    const errorMsg = errorType === 'network' ? t('errors.networkError')
+      : errorType === 'timeout' ? t('errors.timeoutError')
+      : errorType === 'api' ? t('errors.apiError')
+      : t('aiPlan.errorSubtitle');
     return (
       <SafeAreaView style={sharedStyles.screen}>
         <ProgressDots current={3} total={4} />
         <View style={styles.centered}>
           <Text style={styles.moonEmoji}>😔</Text>
           <Text style={styles.errorTitle}>{t('aiPlan.errorTitle')}</Text>
-          <Text style={styles.errorSubtitle}>{t('aiPlan.errorSubtitle')}</Text>
+          <Text style={styles.errorSubtitle}>{errorMsg}</Text>
           <Button label={t('aiPlan.retryBtn')} onPress={() => profile && retryGeneration(profile)} />
         </View>
       </SafeAreaView>

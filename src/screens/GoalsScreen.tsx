@@ -8,6 +8,7 @@ import { Button } from '../components/Button';
 import { ProfileContext } from '../context/ProfileContext';
 import { useTranslation } from '../i18n';
 import { trackScreen, trackOnboardingStep } from '../services/analyticsService';
+import * as storageService from '../services/storageService';
 import { GoalOption } from '../types';
 
 type Props = { navigation: NativeStackNavigationProp<Record<string, undefined>> };
@@ -31,11 +32,18 @@ export function GoalsScreen({ navigation }: Props) {
   useEffect(() => {
     trackScreen('Goals');
     trackOnboardingStep(2);
+    storageService.getOnboardingDraft().then(draft => {
+      if (draft?.goals?.length) setSelected(draft.goals);
+    });
     Animated.parallel([
       Animated.timing(headerOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
       Animated.timing(headerTranslate, { toValue: 0, duration: 400, useNativeDriver: true }),
     ]).start();
   }, [headerOpacity, headerTranslate]);
+
+  useEffect(() => {
+    void storageService.saveOnboardingDraft({ goals: selected });
+  }, [selected]);
 
   function toggle(id: string) {
     setSelected(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]);

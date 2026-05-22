@@ -1,4 +1,4 @@
-# SleepApp — Contexto permanente do projeto
+# Sona — Contexto permanente do projeto
 
 ## Stack
 React Native 0.73 bare, TypeScript estrito, sem Expo
@@ -9,7 +9,7 @@ GitHub: https://github.com/Mauricio1806/sleep-app
 - AWS S3: sons ambientes (bucket: sleep-app-audios-mauricio, us-east-1)
   - Scripts prontos: infrastructure/scripts/setup-s3-complete.ps1 e upload-sounds.ps1
 - AWS EC2: backend Express (infrastructure/ec2/) — IP: 13.220.143.229
-  - Endpoints: POST /api/v1/sleep/plan | /insight | /adjust | /memory/consolidation-tip | GET /health
+  - Endpoints: POST /api/v1/sleep/plan | /insight | /adjust | /memory/consolidation-tip | GET /health | GET /stats
   - PM2 cluster 2 instâncias, Nginx reverse proxy, UFW firewall
   - Deploy: bash infrastructure/scripts/deploy-ec2.sh 13.220.143.229 sleep-app-key.pem
   - Conectar: pwsh infrastructure/ec2/scripts/connect.ps1
@@ -24,10 +24,16 @@ GitHub: https://github.com/Mauricio1806/sleep-app
 Tab labels traduzidos via i18n (tabs.home/sounds/tracker/memory/profile).
 
 ## Status atual
+App renomeado: SleepApp → Sona (package.json, app.json, strings.xml).
 MVP funcional rodando no emulador Pixel 7 API 36.
 Onboarding 4 telas OK, planos gerados via EC2 backend.
 claudeService.ts: postToEC2() → /api/v1/sleep/plan e /api/v1/sleep/insight.
 ANTHROPIC_API_KEY removida do app — fica só no EC2.
+
+EC2 backend (infrastructure/ec2/):
+- Cache em memória por plano (Map, TTL 24h, chave hash do perfil)
+- max_tokens reduzidos: plan=2000, insight=300, memory=200
+- GET /api/v1/stats → { totalCalls, cacheHits, tokensSaved, uptime }
 
 Correções beta aplicadas:
 - Idioma padrão: sempre PT-BR; chave isolada @sleepapp:user_selected_locale; muda só por escolha manual na ProfileScreen.
@@ -36,6 +42,10 @@ Correções beta aplicadas:
 - SoundPlayerScreen reescrito: 30 sons em 6 categorias (Natureza/Sons Brancos/ASMR/Ambientes/Corpo/Especial), tabs horizontais, grid 2 colunas, bottom player.
 - Todos soundNames e soundCategories em todos os 10 locales.
 - SoundOption usa nameKey (i18n) + categoryId — zero strings hardcoded.
+- Erros de rede tipados: ApiErrorType ('network'|'api'|'parse'|'timeout'), SleepApiError class, AIPlanScreen exibe mensagem correta por tipo.
+- errors.timeoutError adicionado nos 10 locales.
+- Onboarding draft: SleepProfileScreen e GoalsScreen salvam/restauram draft em @sleepapp:onboarding_draft; limpo ao gerar plano.
+- docs/PRIVACY_POLICY.md e docs/TERMS_OF_USE.md criados.
 
 Sons com URLs placeholder S3 (aguardando upload-sounds.ps1).
 react-native-sound substituiu react-native-track-player.

@@ -2,16 +2,42 @@ const axios = require('axios');
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const CLAUDE_MODEL = 'claude-sonnet-4-5';
-const MAX_TOKENS = 4096;
 const TIMEOUT_MS = 60000;
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
-async function callClaude(systemPrompt, userPrompt, attempt = 1) {
+const stats = { totalCalls: 0, cacheHits: 0, startTime: Date.now() };
+const planCache = new Map();
+
+function profileCacheKey(profile) {
+  return JSON.stringify({
+    bedtime: profile.bedtime,
+    wakeTime: profile.wakeTime,
+    tiredness: profile.tiredness,
+    stressLevel: profile.stressLevel,
+    caffeine: profile.caffeine,
+    screenTime: profile.screenTime,
+    goals: [...(profile.goals ?? [])].sort(),
+  });
+}
+
+function getStats() {
+  return {
+    totalCalls: stats.totalCalls,
+    cacheHits: stats.cacheHits,
+    tokensSaved: stats.cacheHits * 2000,
+    uptime: Math.floor((Date.now() - stats.startTime) / 1000),
+  };
+}
+
+async function callClaude(systemPrompt, userPrompt, maxTokens = 2000, attempt = 1) {
+  stats.totalCalls++;
   try {
     const response = await axios.post(
       CLAUDE_API_URL,
       {
         model: CLAUDE_MODEL,
-        max_tokens: MAX_TOKENS,
+        max_tokens: maxTokens,
+        stream: false,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
       },
@@ -28,7 +54,7 @@ async function callClaude(systemPrompt, userPrompt, attempt = 1) {
   } catch (err) {
     const status = err.response?.status ?? 0;
     if (attempt === 1 && status >= 500) {
-      return callClaude(systemPrompt, userPrompt, 2);
+      return callClaude(systemPrompt, userPrompt, maxTokens, 2);
     }
     const error = new Error(err.response?.data?.error?.message ?? err.message);
     error.status = status >= 400 ? status : 502;
@@ -42,78 +68,44 @@ function parseJson(text) {
 }
 
 async function generateSleepPlan(profile) {
-  const system = `Você é um especialista acolhedor em higiene do sono e bem-estar.
-Crie planos personalizados de melhora do sono em português brasileiro, com linguagem simples e encorajadora.
-Nunca use jargão médico. Seja prático, empático e motivador.
-Sempre responda com JSON válido, sem texto adicional.`;
+  const key = profileCacheKey(profile);
+  const cached = planCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    stats.cacheHits++;
+    console.log('[cache] hit — economizando tokens');
+    return cached.plan;
+  }
 
-  const user = `Crie um plano de sono personalizado de 14 dias para esta pessoa:
-- Horário de dormir: ${profile.bedtime}
-- Horário de acordar: ${profile.wakeTime}
-- Cansaço ao acordar (1-5): ${profile.tiredness}
-- Nível de estresse (1-5): ${profile.stressLevel}
-- Consome cafeína após 14h: ${profile.caffeine ? 'Sim' : 'Não'}
-- Tempo de tela antes de dormir: ${profile.screenTime}
-- Objetivos: ${profile.goals.join(', ')}
+  const system = 'Especialista em higiene do sono. Plano 14 dias PT-BR, linguagem simples. Apenas JSON válido.';
+  const user = `Plano 14 dias para:\nDormir: ${profile.bedtime} | Acordar: ${profile.wakeTime} | Cansaço: ${profile.tiredness}/5 | Estresse: ${profile.stressLevel}/5 | Cafeína 14h+: ${profile.caffeine ? 'sim' : 'não'} | Tela: ${profile.screenTime} | Objetivos: ${(profile.goals ?? []).join(', ')}\n\nJSON exato:\n{"summary":"2-3 frases","recommendedSound":"nome do som","tips":["dica1","dica2","dica3","dica4"],"days":[{"day":1,"focus":"tema curto","routine":["passo1","passo2","passo3"],"technique":"nome"}]}\nInclua 14 dias.`;
 
-Responda APENAS com este JSON:
-{
-  "summary": "resumo personalizado de 2-3 frases",
-  "recommendedSound": "nome do som mais indicado",
-  "tips": ["dica 1", "dica 2", "dica 3", "dica 4"],
-  "days": [{"day": 1, "focus": "tema", "routine": ["passo 1", "passo 2", "passo 3"], "technique": "técnica"}]
-}
-Inclua todos os 14 dias no array days.`;
-
-  const text = await callClaude(system, user);
-  return parseJson(text);
+  const text = await callClaude(system, user, 2000);
+  const plan = parseJson(text);
+  planCache.set(key, { plan, timestamp: Date.now() });
+  return plan;
 }
 
 async function generateDailyInsight(record) {
-  const system = `Você é um coach de sono empático. Analise registros de sono e forneça insights motivadores em português brasileiro.
-Seja específico, prático e encorajador. Nunca seja crítico ou alarmista.
-Responda apenas com JSON válido.`;
+  const system = 'Coach de sono PT-BR. Insights motivadores. Apenas JSON válido.';
+  const user = `Sono: ${record.durationMinutes}min | ${record.wakeups} acordadas | qualidade ${record.quality}/5 | score ${record.score}/100 | álcool:${record.hadAlcohol ? 's' : 'n'} cafeína:${record.hadCaffeine ? 's' : 'n'}\nJSON: {"insight":"1-2 frases motivadoras","tip":"dica prática"}`;
 
-  const user = `Analise este registro de sono:
-- Duração: ${record.durationMinutes} minutos
-- Acordadas: ${record.wakeups}
-- Qualidade percebida: ${record.quality}/5
-- Álcool: ${record.hadAlcohol ? 'Sim' : 'Não'}
-- Cafeína: ${record.hadCaffeine ? 'Sim' : 'Não'}
-- Score calculado: ${record.score}/100
-
-Responda APENAS com: {"insight": "observação de 1-2 frases", "tip": "dica prática para amanhã"}`;
-
-  const text = await callClaude(system, user);
+  const text = await callClaude(system, user, 300);
   return parseJson(text);
 }
 
 async function adjustWeeklyPlan(summary) {
-  const system = `Você é um especialista em sono. Analise semanas de dados e sugira ajustes ao plano de sono em português.
-Responda apenas com JSON válido.`;
+  const system = 'Especialista em sono PT-BR. Apenas JSON válido.';
+  const user = `Semana: score ${summary.averageScore}/100 | ${summary.averageDuration}min/noite | ${summary.totalRecords} registros\nJSON: {"tips":["ajuste1","ajuste2"]}`;
 
-  const user = `Análise semanal de sono:
-- Score médio: ${summary.averageScore}/100
-- Duração média: ${summary.averageDuration} minutos
-- Total de registros: ${summary.totalRecords}
-
-Responda APENAS com: {"tips": ["ajuste 1", "ajuste 2"]}`;
-
-  const text = await callClaude(system, user);
+  const text = await callClaude(system, user, 400);
   return parseJson(text);
 }
 
 async function generateMemoryConsolidationTip(sleepDuration, sleepScore) {
-  const system = `Você é um neurocientista especializado em sono e memória. Forneça dicas científicas em português brasileiro.
-Responda apenas com JSON válido.`;
+  const system = 'Neurocientista sono/memória PT-BR. Apenas JSON válido.';
+  const user = `Sono: ${sleepDuration}min, score ${sleepScore}/100\nJSON: {"tip":"1-2 frases sobre memória e este sono","science":"fato científico breve"}`;
 
-  const user = `Dados de sono desta noite:
-- Duração: ${sleepDuration} minutos
-- Score: ${sleepScore}/100
-
-Responda APENAS com: {"tip": "dica prática de 1-2 frases sobre memória e este sono", "science": "fato científico breve"}`;
-
-  const text = await callClaude(system, user);
+  const text = await callClaude(system, user, 200);
   return parseJson(text);
 }
 
@@ -122,4 +114,5 @@ module.exports = {
   generateDailyInsight,
   adjustWeeklyPlan,
   generateMemoryConsolidationTip,
+  getStats,
 };

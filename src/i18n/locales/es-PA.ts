@@ -159,6 +159,7 @@ export const esPA = {
     apiError: 'No pudimos conectar al servidor. Verifica tu conexión.',
     networkError: 'Sin conexión a internet.',
     parseError: 'Error al procesar la respuesta. Intenta de nuevo.',
+    timeoutError: 'Tardó demasiado, inténtalo de nuevo.',
   },
   memory: {
     title: 'Memoria del Sueño',

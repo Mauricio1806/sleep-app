@@ -159,6 +159,7 @@ export const esUY = {
     apiError: 'No pudimos conectar al servidor. Verificá tu conexión.',
     networkError: 'Sin conexión a internet.',
     parseError: 'Error al procesar la respuesta. Intentá de nuevo.',
+    timeoutError: 'Tardó demasiado, intentá de nuevo.',
   },
   memory: {
     title: 'Memoria del Sueño',

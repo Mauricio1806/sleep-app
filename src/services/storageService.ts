@@ -71,6 +71,21 @@ export async function clearAll(): Promise<void> {
   await Promise.all(keys.map(k => AsyncStorage.removeItem(k)));
 }
 
+export async function saveOnboardingDraft(draft: Partial<SleepProfile>): Promise<void> {
+  const existing = await getOnboardingDraft() ?? {};
+  await AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_DRAFT, JSON.stringify({ ...existing, ...draft }));
+}
+
+export async function getOnboardingDraft(): Promise<Partial<SleepProfile> | null> {
+  const raw = await AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_DRAFT);
+  if (!raw) return null;
+  return JSON.parse(raw) as Partial<SleepProfile>;
+}
+
+export async function clearOnboardingDraft(): Promise<void> {
+  await AsyncStorage.removeItem(STORAGE_KEYS.ONBOARDING_DRAFT);
+}
+
 export async function saveMemoryIntention(intention: MemoryIntention): Promise<void> {
   const existing = await getMemoryIntentions();
   const updated = [intention, ...existing.filter(i => i.id !== intention.id)].slice(0, 90);

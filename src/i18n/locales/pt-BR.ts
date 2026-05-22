@@ -159,6 +159,7 @@ export const ptBR = {
     apiError: 'Não foi possível conectar ao servidor. Verifique sua conexão.',
     networkError: 'Sem conexão com a internet.',
     parseError: 'Erro ao processar resposta. Tente novamente.',
+    timeoutError: 'Demorou muito, tente novamente.',
   },
   memory: {
     title: 'Memória do Sono',
