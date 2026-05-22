@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Region, UserSettings } from '../types';
 
-const LOCALE_KEY = '@sleepapp:settings';
+const LOCALE_KEY = '@sleepapp:user_selected_locale';
 
 type LocaleValue = UserSettings['language'];
 
@@ -25,6 +25,8 @@ const localeToRegion: Record<LocaleValue, Region> = {
   'es-PA': 'PA',
 };
 
+const VALID_LOCALES = new Set<string>(Object.keys(localeToRegion));
+
 export const LocaleContext = createContext<LocaleContextType>({
   locale: 'pt-BR',
   region: 'BR',
@@ -35,20 +37,16 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<LocaleValue>('pt-BR');
 
   useEffect(() => {
-    AsyncStorage.getItem(LOCALE_KEY).then(raw => {
-      if (!raw) return;
-      const settings = JSON.parse(raw) as Partial<UserSettings>;
-      if (settings.language) {
-        setLocaleState(settings.language);
+    AsyncStorage.getItem(LOCALE_KEY).then(saved => {
+      if (saved && VALID_LOCALES.has(saved)) {
+        setLocaleState(saved as LocaleValue);
       }
     });
   }, []);
 
   async function setLocale(newLocale: LocaleValue) {
     setLocaleState(newLocale);
-    const raw = await AsyncStorage.getItem(LOCALE_KEY);
-    const settings = raw ? (JSON.parse(raw) as UserSettings) : ({} as UserSettings);
-    await AsyncStorage.setItem(LOCALE_KEY, JSON.stringify({ ...settings, language: newLocale }));
+    await AsyncStorage.setItem(LOCALE_KEY, newLocale);
   }
 
   return (

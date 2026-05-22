@@ -10,9 +10,9 @@ import { ProfileContext } from '../context/ProfileContext';
 import { useAIPlan } from '../hooks/useAIPlan';
 import { useTranslation } from '../i18n';
 import { trackScreen, trackOnboardingStep } from '../services/analyticsService';
-import { ptBR } from '../i18n/locales/pt-BR';
-
 type Props = { navigation: NativeStackNavigationProp<Record<string, undefined>> };
+
+const LOADING_MSG_COUNT = 6;
 
 export function AIPlanScreen({ navigation }: Props) {
   const { t } = useTranslation();
@@ -22,8 +22,9 @@ export function AIPlanScreen({ navigation }: Props) {
   const msgOpacity = useRef(new Animated.Value(1)).current;
   const planOpacity = useRef(new Animated.Value(0)).current;
 
-  // Access translated messages as array — fallback to pt-BR keys
-  const messages = ptBR.aiPlan.loadingMessages;
+  const messages = Array.from({ length: LOADING_MSG_COUNT }, (_, i) =>
+    t(`aiPlan.loadingMessages.${i}`),
+  );
 
   useEffect(() => {
     trackScreen('AIPlan');
@@ -102,7 +103,7 @@ export function AIPlanScreen({ navigation }: Props) {
           <Text style={styles.sectionLabel}>🎵 {t('aiPlan.soundLabel')}</Text>
           <Text style={styles.soundName}>{plan.recommendedSound}</Text>
         </View>
-        <Text style={styles.sectionTitle}>Seus primeiros 3 dias</Text>
+        <Text style={styles.sectionTitle}>{t('aiPlan.firstDaysTitle')}</Text>
         {freeDays.map(day => (
           <View key={day.day} style={sharedStyles.card}>
             <Text style={styles.dayTitle}>

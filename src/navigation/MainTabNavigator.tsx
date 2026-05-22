@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTranslation } from '../i18n';
 import Svg, { Path, Circle, Line } from 'react-native-svg';
 import { HomeScreen } from '../screens/HomeScreen';
 import { SoundPlayerScreen } from '../screens/SoundPlayerScreen';
@@ -56,22 +57,25 @@ function PersonIcon({ color }: { color: string }) {
 }
 
 export function MainTabNavigator() {
+  const { t } = useTranslation();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: colors.bgCard, borderTopColor: colors.border, height: 60 },
+        tabBarStyle: { backgroundColor: colors.bgCard, borderTopColor: colors.border, height: 68 },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
-        tabBarShowLabel: false,
+        tabBarLabelStyle: { fontSize: 10, marginBottom: 4 },
       }}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: ({ color }) => <HomeIcon color={color} /> }} />
-      <Tab.Screen name="Sons" component={SoundPlayerScreen} options={{ tabBarIcon: ({ color }) => <SoundIcon color={color} /> }} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarLabel: t('tabs.home'), tabBarIcon: ({ color }) => <HomeIcon color={color} /> }} />
+      <Tab.Screen name="Sons" component={SoundPlayerScreen} options={{ tabBarLabel: t('tabs.sounds'), tabBarIcon: ({ color }) => <SoundIcon color={color} /> }} />
       <Tab.Screen
         name="Registrar"
         component={SleepTrackerScreen}
         options={{
+          tabBarLabel: t('tabs.tracker'),
           tabBarIcon: ({ color }) => (
             <View style={styles.centerTab}>
               <MoonIcon color={color} />
@@ -79,8 +83,8 @@ export function MainTabNavigator() {
           ),
         }}
       />
-      <Tab.Screen name="Memória" component={MemoryScreen} options={{ tabBarIcon: ({ color }) => <BrainIcon color={color} /> }} />
-      <Tab.Screen name="Perfil" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <PersonIcon color={color} /> }} />
+      <Tab.Screen name="Memória" component={MemoryScreen} options={{ tabBarLabel: t('tabs.memory'), tabBarIcon: ({ color }) => <BrainIcon color={color} /> }} />
+      <Tab.Screen name="Perfil" component={ProfileScreen} options={{ tabBarLabel: t('tabs.profile'), tabBarIcon: ({ color }) => <PersonIcon color={color} /> }} />
     </Tab.Navigator>
   );
 }

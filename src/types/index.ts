@@ -79,10 +79,11 @@ export interface GoalOption {
 
 export interface SoundOption {
   id: string;
-  name: string;
+  nameKey: string;
   url: string;
   isPremium: boolean;
   emoji: string;
+  categoryId: string;
 }
 
 export interface MemoryIntention {

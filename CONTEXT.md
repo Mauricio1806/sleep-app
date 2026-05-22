@@ -20,17 +20,26 @@ GitHub: https://github.com/Mauricio1806/sleep-app
   - claudeService.ts aponta para http://13.220.143.229/api/v1/
 
 ## Telas (5 tabs)
-🏠 Home | 🎵 Sons (16 sons, 6 grátis) | 🌙 Registrar | 🧠 Memória | 👤 Perfil
+🏠 Início | 🎵 Sons (30 sons, 10 grátis, 6 categorias) | 🌙 Registrar | 🧠 Memória | 👤 Perfil
+Tab labels traduzidos via i18n (tabs.home/sounds/tracker/memory/profile).
 
 ## Status atual
 MVP funcional rodando no emulador Pixel 7 API 36.
-Onboarding 4 telas OK, planos gerados via EC2 backend (não mais direto à Anthropic).
-claudeService.ts reescrito: postToEC2() → /api/v1/sleep/plan e /api/v1/sleep/insight.
+Onboarding 4 telas OK, planos gerados via EC2 backend.
+claudeService.ts: postToEC2() → /api/v1/sleep/plan e /api/v1/sleep/insight.
 ANTHROPIC_API_KEY removida do app — fica só no EC2.
+
+Correções beta aplicadas:
+- Idioma padrão: sempre PT-BR; chave isolada @sleepapp:user_selected_locale; muda só por escolha manual na ProfileScreen.
+- i18n fallback: se chave ausente no locale ativo, retorna PT-BR (nunca undefined).
+- Auditoria strings: AIPlanScreen.tsx loading messages e firstDaysTitle agora via t(); SoundCard badges via i18n.
+- SoundPlayerScreen reescrito: 30 sons em 6 categorias (Natureza/Sons Brancos/ASMR/Ambientes/Corpo/Especial), tabs horizontais, grid 2 colunas, bottom player.
+- Todos soundNames e soundCategories em todos os 10 locales.
+- SoundOption usa nameKey (i18n) + categoryId — zero strings hardcoded.
+
 Sons com URLs placeholder S3 (aguardando upload-sounds.ps1).
 react-native-sound substituiu react-native-track-player.
-MemoryScreen.tsx criada: intenção noturna + revisão matinal + dica científica + streak 7 dias.
-Menções à IA/AI removidas de todos os 10 locales (subtitle, cta, summaryLabel).
+MemoryScreen.tsx: intenção noturna + revisão matinal + dica científica + streak 7 dias.
 
 ## Regras inegociáveis
 - Zero any no TypeScript

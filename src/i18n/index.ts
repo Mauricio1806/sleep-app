@@ -47,13 +47,14 @@ export function useTranslation() {
 
   function t(key: string, params?: Record<string, string | number>): string {
     const value = getNestedValue(dict as unknown as Record<string, unknown>, key);
-    if (typeof value !== 'string') {
-      return key;
+    if (typeof value === 'string') {
+      return params ? interpolate(value, params) : value;
     }
-    if (params) {
-      return interpolate(value, params);
+    const fallback = getNestedValue(ptBR as unknown as Record<string, unknown>, key);
+    if (typeof fallback === 'string') {
+      return params ? interpolate(fallback, params) : fallback;
     }
-    return value;
+    return key;
   }
 
   return { t };

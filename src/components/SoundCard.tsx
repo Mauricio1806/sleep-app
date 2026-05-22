@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { SoundOption } from '../types';
 import { colors, spacing, radius, typography } from '../../theme';
+import { useTranslation } from '../i18n';
 
 interface SoundCardProps {
   sound: SoundOption;
@@ -11,6 +12,8 @@ interface SoundCardProps {
 }
 
 export function SoundCard({ sound, isLocked, isPlaying, onPress }: SoundCardProps) {
+  const { t } = useTranslation();
+
   return (
     <TouchableOpacity
       style={[styles.card, isPlaying && styles.cardActive, isLocked && styles.cardLocked]}
@@ -19,11 +22,15 @@ export function SoundCard({ sound, isLocked, isPlaying, onPress }: SoundCardProp
       disabled={isLocked}
     >
       <Text style={styles.emoji}>{sound.emoji}</Text>
-      <Text style={[styles.name, isLocked && styles.nameLocked]}>{sound.name}</Text>
+      <Text style={[styles.name, isLocked && styles.nameLocked]}>{t(sound.nameKey)}</Text>
       {isLocked ? (
-        <View style={styles.badge}><Text style={styles.badgeText}>🔒 Premium</Text></View>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>🔒 {t('soundPlayer.premiumLabel')}</Text>
+        </View>
       ) : isPlaying ? (
-        <View style={[styles.badge, styles.badgePlaying]}><Text style={styles.badgeText}>▶ Tocando</Text></View>
+        <View style={[styles.badge, styles.badgePlaying]}>
+          <Text style={styles.badgeText}>▶ {t('soundPlayer.nowPlaying')}</Text>
+        </View>
       ) : null}
     </TouchableOpacity>
   );

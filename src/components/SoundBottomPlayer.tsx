@@ -41,7 +41,7 @@ export function SoundBottomPlayer({
       <View style={styles.infoRow}>
         <Text style={styles.emoji}>{sound?.emoji ?? '🎵'}</Text>
         <Text style={styles.name} numberOfLines={1}>
-          {sound?.name ?? t('soundPlayer.tapToPlay')}
+          {sound ? t(sound.nameKey) : t('soundPlayer.tapToPlay')}
         </Text>
         <TouchableOpacity onPress={onVolumeStep} style={styles.volBtn} accessibilityLabel={t('soundPlayer.volume')}>
           <Text style={styles.volIcon}>{VOLUME_ICONS[volumeIndex]}</Text>
