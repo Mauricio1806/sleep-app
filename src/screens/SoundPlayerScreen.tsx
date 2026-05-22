@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Sound from 'react-native-sound';
 import { colors, spacing, typography, sharedStyles, radius } from '../../theme';
 import { SoundCard } from '../components/SoundCard';
@@ -93,12 +94,18 @@ export function SoundPlayerScreen() {
   const [volumeIndex, setVolumeIndex] = useState(3);
   const soundRef = useRef<Sound | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const catScrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     trackScreen('SoundPlayer');
     return () => { stopCurrent(); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useFocusEffect(useCallback(() => {
+    setActiveCat(CATEGORIES[0].id);
+    catScrollRef.current?.scrollTo({ x: 0, animated: false });
+  }, []));
 
   function stopCurrent() {
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
@@ -147,6 +154,7 @@ export function SoundPlayerScreen() {
       <View style={styles.container}>
         <Text style={styles.title}>{t('soundPlayer.title')}</Text>
         <ScrollView
+          ref={catScrollRef}
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.catBar}

@@ -163,7 +163,7 @@ export const ptBR = {
   memory: {
     title: 'Memória do Sono',
     intentionTitle: 'Intenção para esta noite',
-    intentionPlaceholder: 'O que você pretende fazer diferente esta noite?',
+    intentionPlaceholder: 'O que você quer lembrar amanhã?',
     saveBtn: 'Salvar intenção',
     morningTitle: 'Revisão matinal',
     rememberedBtn: 'Lembrei e fiz',
@@ -171,6 +171,13 @@ export const ptBR = {
     streakLabel: 'dias com intenção',
     tipLabel: 'Dica científica',
     historyTitle: 'Últimos 7 dias',
+    tips: [
+      'Pessoas que definem intenção de sono adormecem 9 minutos mais rápido em média',
+      'Revisar o que aprendeu antes de dormir aumenta retenção em até 40%',
+      'O sono REM consolida memórias emocionais — durma bem após dias importantes',
+      'Seu hipocampo processa e arquiva memórias durante o sono profundo',
+      'Escrever antes de dormir reduz pensamentos intrusivos e acelera o adormecer',
+    ],
   },
   tabs: {
     home: 'Início',

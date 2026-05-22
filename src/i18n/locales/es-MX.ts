@@ -162,8 +162,8 @@ export const esMX = {
   },
   memory: {
     title: 'Memoria del Sueño',
-    intentionTitle: 'Tu intención para esta noche',
-    intentionPlaceholder: '¿Qué planeas hacer diferente esta noche?',
+    intentionTitle: 'Intención para esta noche',
+    intentionPlaceholder: '¿Qué quieres recordar mañana?',
     saveBtn: 'Guardar intención',
     morningTitle: 'Revisión matinal',
     rememberedBtn: 'Lo recordé y lo hice',
@@ -171,6 +171,13 @@ export const esMX = {
     streakLabel: 'días con intención',
     tipLabel: 'Dato científico',
     historyTitle: 'Últimos 7 días',
+    tips: [
+      'Las personas que definen una intención de sueño se duermen 9 minutos más rápido en promedio',
+      'Repasar lo que aprendiste antes de dormir aumenta la retención hasta un 40%',
+      'El sueño REM consolida memorias emocionales — duerme bien después de días importantes',
+      'Tu hipocampo procesa y archiva recuerdos durante el sueño profundo',
+      'Escribir antes de dormir reduce pensamientos intrusivos y acelera el inicio del sueño',
+    ],
   },
   tabs: {
     home: 'Inicio',

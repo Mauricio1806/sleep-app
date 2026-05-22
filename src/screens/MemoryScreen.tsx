@@ -8,13 +8,13 @@ import { trackScreen } from '../services/analyticsService';
 import * as storageService from '../services/storageService';
 import { MemoryIntention } from '../types';
 
-const TIPS = [
-  'Escrever sua intenção antes de dormir aumenta em 42% a chance de se lembrar dela ao acordar.',
-  'A consolidação da memória ocorre principalmente durante o sono profundo (fase N3).',
-  'Revisar intenções de sono por 5 dias seguidos melhora a qualidade percebida do sono.',
-  'O sono REM fortalece conexões neurais relacionadas à aprendizagem e formação de hábitos.',
-  'Pessoas que definem uma intenção de sono adormecem em média 9 minutos mais rápido.',
-];
+const TIP_COUNT = 5;
+
+function getDailyTipIndex(): number {
+  const start = new Date(new Date().getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((Date.now() - start.getTime()) / 86400000);
+  return dayOfYear % TIP_COUNT;
+}
 
 const WEEK_DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
@@ -57,7 +57,7 @@ export function MemoryScreen() {
   const [history, setHistory] = useState<MemoryIntention[]>([]);
   const [streak, setStreak] = useState(0);
   const [saving, setSaving] = useState(false);
-  const [tipIndex] = useState(() => Math.floor(Math.random() * TIPS.length));
+  const tipIndex = getDailyTipIndex();
 
   useEffect(() => { trackScreen('Memory'); }, []);
 
@@ -163,7 +163,7 @@ export function MemoryScreen() {
         {/* Dica científica */}
         <View style={[sharedStyles.card, styles.tipCard]}>
           <Text style={styles.tipLabel}>{t('memory.tipLabel')}</Text>
-          <Text style={styles.tipText}>{TIPS[tipIndex]}</Text>
+          <Text style={styles.tipText}>{t(`memory.tips.${tipIndex}`)}</Text>
         </View>
 
         {/* Sequência + Histórico 7 dias */}
