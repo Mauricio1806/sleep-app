@@ -127,10 +127,10 @@ CloudFront Origins:
 bash infrastructure/scripts/setup-ec2.sh
 
 # 2. Deploy do código
-bash infrastructure/scripts/deploy-ec2.sh EC2_IP KEY.pem
+bash infrastructure/scripts/deploy-ec2.sh 13.220.143.229 KEY.pem
 
 # 3. Verificar
-curl http://EC2_IP/health
+curl http://13.220.143.229/health
 ```
 
 ### Migração do app (TODO-AWS-EC2)
@@ -142,5 +142,5 @@ Nos arquivos do app, procure por `TODO-AWS-EC2` para encontrar onde trocar as ch
 fetch('https://api.anthropic.com/v1/messages', ...)
 
 // Depois (via EC2):
-fetch('http://EC2_IP/api/v1/sleep/plan', { body: { profile } })
+fetch('http://13.220.143.229/api/v1/sleep/plan', { body: { profile } })
 ```

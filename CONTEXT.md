@@ -7,16 +7,28 @@ GitHub: https://github.com/Mauricio1806/sleep-app
 
 ## Infraestrutura
 - AWS S3: sons ambientes (bucket: sleep-app-audios-mauricio, us-east-1)
-- AWS Lambda: proxy Claude API (Function URL configurada)
+  - Scripts prontos: infrastructure/scripts/setup-s3-complete.ps1 e upload-sounds.ps1
+- AWS EC2: backend Express (infrastructure/ec2/) — IP: 13.220.143.229
+  - Endpoints: POST /api/v1/sleep/plan | /insight | /adjust | /memory/consolidation-tip | GET /health
+  - PM2 cluster 2 instâncias, Nginx reverse proxy, UFW firewall
+  - Deploy: bash infrastructure/scripts/deploy-ec2.sh 13.220.143.229 sleep-app-key.pem
+  - Conectar: pwsh infrastructure/ec2/scripts/connect.ps1
+  - Key: C:\Users\mauri\Videos\data-engineering-workspace\sleep-app-key.pem
 - Supabase: banco de dados (a conectar na Fase 2)
 - RevenueCat: assinaturas (a conectar na Fase 2)
 - Claude API: claude-sonnet-4-5, chave via Config.ANTHROPIC_API_KEY
+  - TODO-AWS-EC2 em claudeService.ts marca cada função para migrar ao EC2
+
+## Telas (5 tabs)
+🏠 Home | 🎵 Sons (16 sons, 6 grátis) | 🌙 Registrar | 🧠 Memória | 👤 Perfil
 
 ## Status atual
 MVP funcional rodando no emulador Pixel 7 API 36.
 Onboarding 4 telas OK, Claude API gerando planos OK.
-Sons com URLs placeholder (aguardando S3).
+Sons com URLs placeholder S3 (aguardando upload-sounds.ps1).
 react-native-sound substituiu react-native-track-player.
+MemoryScreen.tsx criada: intenção noturna + revisão matinal + dica científica + streak 7 dias.
+Menções à IA/AI removidas de todos os 10 locales (subtitle, cta, summaryLabel).
 
 ## Regras inegociáveis
 - Zero any no TypeScript
