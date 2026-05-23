@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Background circle -->
+  <circle cx="512" cy="512" r="512" fill="#0F0E17"/>
+
+  <!-- Glow around crescent -->
+  <circle cx="530" cy="490" r="230" fill="#A499F9" opacity="0.18"/>
+
+  <!-- Crescent moon: difference of two offset circles -->
+  <!-- Main circle of the moon -->
+  <circle cx="510" cy="490" r="200" fill="#7C6FF7"/>
+  <!-- Cutout circle to form crescent -->
+  <circle cx="600" cy="450" r="185" fill="#0F0E17"/>
+
+  <!-- Stars -->
+  <circle cx="740" cy="310" r="14" fill="#F0EFF8" opacity="0.95"/>
+  <circle cx="680" cy="220" r="9"  fill="#F0EFF8" opacity="0.80"/>
+  <circle cx="790" cy="410" r="7"  fill="#F0EFF8" opacity="0.70"/>
+</svg>
