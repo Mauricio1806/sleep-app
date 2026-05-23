@@ -104,7 +104,18 @@ export function SoundPlayerScreen() {
   useFocusEffect(useCallback(() => {
     setActiveCat(CATEGORIES[0].id);
     catScrollRef.current?.scrollTo({ x: 0, animated: false });
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.pause();
+        setIsPlaying(false);
+      }
+    };
   }, []));
+
+  function pauseCurrent() {
+    if (soundRef.current) { soundRef.current.pause(); }
+    setIsPlaying(false);
+  }
 
   function stopCurrent() {
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
@@ -115,7 +126,16 @@ export function SoundPlayerScreen() {
 
   function handlePress(sound: SoundOption) {
     if (sound.isPremium) return;
-    if (currentId === sound.id && isPlaying) { stopCurrent(); return; }
+    if (currentId === sound.id) {
+      if (isPlaying) {
+        pauseCurrent();
+      } else {
+        soundRef.current?.play((success) => { if (!success) { setIsPlaying(false); setCurrentId(null); } });
+        setIsPlaying(true);
+        if (timer > 0) { timerRef.current = setTimeout(stopCurrent, timer * 60 * 1000); }
+      }
+      return;
+    }
     stopCurrent();
     const s = new Sound(sound.url, '', (error) => {
       if (error) { setCurrentId(sound.id); setIsPlaying(false); return; }
