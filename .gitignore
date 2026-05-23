@@ -91,3 +91,6 @@ ios/build/
 # Signing
 *.jks
 release.keystore
+
+# Secrets (never commit)
+docs/KEYSTORE_INFO.md
