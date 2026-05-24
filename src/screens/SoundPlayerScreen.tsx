@@ -11,7 +11,8 @@ import { trackScreen } from '../services/analyticsService';
 
 Sound.setCategory('Playback', true);
 
-const S3 = 'https://sona-app-audios.s3.us-east-1.amazonaws.com/sons-sleep-app';
+const S3_FREE    = 'https://sona-app-audios.s3.us-east-1.amazonaws.com/sons-sleep-app';
+const S3_PREMIUM = 'https://sona-app-audios.s3.us-east-1.amazonaws.com';
 
 interface SoundCategory {
   id: string;
@@ -23,61 +24,61 @@ const CATEGORIES: SoundCategory[] = [
   {
     id: 'nature', nameKey: 'soundCategories.nature',
     sounds: [
-      { id: 'rain', nameKey: 'soundNames.rainSoft', url: `${S3}/chuva-suave.mp3.mp3`, isPremium: false, emoji: '🌧️', categoryId: 'nature' },
-      { id: 'forest', nameKey: 'soundNames.forestNight', url: `${S3}/floresta-noite.mp3.mp3`, isPremium: false, emoji: '🌲', categoryId: 'nature' },
-      { id: 'ocean', nameKey: 'soundNames.oceanWaves', url: `${S3}/ondas-mar.mp3.mp3`, isPremium: false, emoji: '🌊', categoryId: 'nature' },
-      { id: 'thunder', nameKey: 'soundNames.distantThunder', url: `${S3}/chuva-suave.mp3.mp3`, isPremium: true, emoji: '⛈️', categoryId: 'nature' },
-      { id: 'river', nameKey: 'soundNames.mountainRiver', url: `${S3}/ondas-mar.mp3.mp3`, isPremium: true, emoji: '🏔️', categoryId: 'nature' },
-      { id: 'tropical', nameKey: 'soundNames.tropicalForest', url: `${S3}/floresta-noite.mp3.mp3`, isPremium: true, emoji: '🌴', categoryId: 'nature' },
+      { id: 'rain',     nameKey: 'soundNames.rainSoft',       url: `${S3_FREE}/chuva-suave.mp3.mp3`,        isPremium: false, emoji: '🌧️', categoryId: 'nature' },
+      { id: 'forest',   nameKey: 'soundNames.forestNight',    url: `${S3_FREE}/floresta-noite.mp3.mp3`,     isPremium: false, emoji: '🌲', categoryId: 'nature' },
+      { id: 'ocean',    nameKey: 'soundNames.oceanWaves',     url: `${S3_FREE}/ondas-mar.mp3.mp3`,          isPremium: false, emoji: '🌊', categoryId: 'nature' },
+      { id: 'thunder',  nameKey: 'soundNames.distantThunder', url: `${S3_PREMIUM}/trovao.mp3.mp3`,          isPremium: true,  emoji: '⛈️', categoryId: 'nature' },
+      { id: 'river',    nameKey: 'soundNames.mountainRiver',  url: `${S3_PREMIUM}/rio-montanha.mp3.mp3`,    isPremium: true,  emoji: '🏔️', categoryId: 'nature' },
+      { id: 'tropical', nameKey: 'soundNames.tropicalForest', url: `${S3_PREMIUM}/floresta-tropical.mp3.mp3`, isPremium: true, emoji: '🌴', categoryId: 'nature' },
     ],
   },
   {
     id: 'white', nameKey: 'soundCategories.white',
     sounds: [
-      { id: 'white_noise', nameKey: 'soundNames.whiteNoise', url: `${S3}/ruido-branco.mp3.mp3`, isPremium: false, emoji: '⬜', categoryId: 'white' },
-      { id: 'wind', nameKey: 'soundNames.gentleWind', url: `${S3}/vento-suave.mp3.mp3`, isPremium: false, emoji: '💨', categoryId: 'white' },
-      { id: 'fan', nameKey: 'soundNames.ceilingFan', url: `${S3}/ruido-branco.mp3.mp3`, isPremium: true, emoji: '🌀', categoryId: 'white' },
-      { id: 'shower', nameKey: 'soundNames.shower', url: `${S3}/chuva-suave.mp3.mp3`, isPremium: true, emoji: '🚿', categoryId: 'white' },
+      { id: 'white_noise', nameKey: 'soundNames.whiteNoise',  url: `${S3_FREE}/ruido-branco.mp3.mp3`,      isPremium: false, emoji: '⬜', categoryId: 'white' },
+      { id: 'wind',        nameKey: 'soundNames.gentleWind',  url: `${S3_FREE}/vento-suave.mp3.mp3`,       isPremium: false, emoji: '💨', categoryId: 'white' },
+      { id: 'fan',         nameKey: 'soundNames.ceilingFan',  url: `${S3_PREMIUM}/ventilador.mp3.mp3`,     isPremium: true,  emoji: '🌀', categoryId: 'white' },
+      { id: 'shower',      nameKey: 'soundNames.shower',      url: `${S3_PREMIUM}/chuveiro.mp3.mp3`,       isPremium: true,  emoji: '🚿', categoryId: 'white' },
     ],
   },
   {
     id: 'asmr', nameKey: 'soundCategories.asmr',
     sounds: [
-      { id: 'fireplace', nameKey: 'soundNames.fireplace', url: `${S3}/lareira.mp3.mp3`, isPremium: false, emoji: '🔥', categoryId: 'asmr' },
-      { id: 'rain_window', nameKey: 'soundNames.rainWindow', url: `${S3}/chuva-janela.mp3.mp3`, isPremium: false, emoji: '🪟', categoryId: 'asmr' },
-      { id: 'whispers', nameKey: 'soundNames.gentleWhispers', url: `${S3}/vento-suave.mp3.mp3`, isPremium: true, emoji: '🤫', categoryId: 'asmr' },
-      { id: 'book_pages', nameKey: 'soundNames.bookPages', url: `${S3}/biblioteca.mp3.mp3`, isPremium: true, emoji: '📖', categoryId: 'asmr' },
-      { id: 'handwriting', nameKey: 'soundNames.handwriting', url: `${S3}/biblioteca.mp3.mp3`, isPremium: true, emoji: '✍️', categoryId: 'asmr' },
-      { id: 'tapping', nameKey: 'soundNames.gentleTapping', url: `${S3}/batimentos.mp3.mp3`, isPremium: true, emoji: '🫧', categoryId: 'asmr' },
+      { id: 'fireplace',   nameKey: 'soundNames.fireplace',       url: `${S3_FREE}/lareira.mp3.mp3`,           isPremium: false, emoji: '🔥', categoryId: 'asmr' },
+      { id: 'rain_window', nameKey: 'soundNames.rainWindow',      url: `${S3_FREE}/chuva-janela.mp3.mp3`,      isPremium: false, emoji: '🪟', categoryId: 'asmr' },
+      { id: 'whispers',    nameKey: 'soundNames.gentleWhispers',  url: `${S3_PREMIUM}/sussurros.mp3.mp3`,      isPremium: true,  emoji: '🤫', categoryId: 'asmr' },
+      { id: 'book_pages',  nameKey: 'soundNames.bookPages',       url: `${S3_PREMIUM}/paginas-livro.mp3.mp3`,  isPremium: true,  emoji: '📖', categoryId: 'asmr' },
+      { id: 'handwriting', nameKey: 'soundNames.handwriting',     url: `${S3_PREMIUM}/escrita-mao.mp3.mp3`,    isPremium: true,  emoji: '✍️', categoryId: 'asmr' },
+      { id: 'tapping',     nameKey: 'soundNames.gentleTapping',   url: `${S3_PREMIUM}/tapping.mp3.mp3`,        isPremium: true,  emoji: '🫧', categoryId: 'asmr' },
     ],
   },
   {
     id: 'ambient', nameKey: 'soundCategories.ambient',
     sounds: [
-      { id: 'cafe', nameKey: 'soundNames.parisCafe', url: `${S3}/cafe-parisiense.mp3.mp3`, isPremium: false, emoji: '☕', categoryId: 'ambient' },
-      { id: 'library', nameKey: 'soundNames.quietLibrary', url: `${S3}/biblioteca.mp3.mp3`, isPremium: false, emoji: '📚', categoryId: 'ambient' },
-      { id: 'train', nameKey: 'soundNames.nightTrain', url: `${S3}/cafe-parisiense.mp3.mp3`, isPremium: true, emoji: '🚂', categoryId: 'ambient' },
-      { id: 'aquarium', nameKey: 'soundNames.aquarium', url: `${S3}/ondas-mar.mp3.mp3`, isPremium: true, emoji: '🐠', categoryId: 'ambient' },
-      { id: 'spa', nameKey: 'soundNames.spaRelax', url: `${S3}/floresta-noite.mp3.mp3`, isPremium: true, emoji: '🧖', categoryId: 'ambient' },
-      { id: 'garden', nameKey: 'soundNames.japaneseGarden', url: `${S3}/floresta-noite.mp3.mp3`, isPremium: true, emoji: '🎋', categoryId: 'ambient' },
+      { id: 'cafe',     nameKey: 'soundNames.parisCafe',      url: `${S3_FREE}/cafe-parisiense.mp3.mp3`,   isPremium: false, emoji: '☕', categoryId: 'ambient' },
+      { id: 'library',  nameKey: 'soundNames.quietLibrary',   url: `${S3_FREE}/biblioteca.mp3.mp3`,        isPremium: false, emoji: '📚', categoryId: 'ambient' },
+      { id: 'train',    nameKey: 'soundNames.nightTrain',     url: `${S3_PREMIUM}/trem-noturno.mp3.mp3`,   isPremium: true,  emoji: '🚂', categoryId: 'ambient' },
+      { id: 'aquarium', nameKey: 'soundNames.aquarium',       url: `${S3_PREMIUM}/aquario.mp3.mp3`,        isPremium: true,  emoji: '🐠', categoryId: 'ambient' },
+      { id: 'spa',      nameKey: 'soundNames.spaRelax',       url: `${S3_PREMIUM}/spa.mp3.mp3`,            isPremium: true,  emoji: '🧖', categoryId: 'ambient' },
+      { id: 'garden',   nameKey: 'soundNames.japaneseGarden', url: `${S3_PREMIUM}/jardim-japones.mp3.mp3`, isPremium: true,  emoji: '🎋', categoryId: 'ambient' },
     ],
   },
   {
     id: 'body', nameKey: 'soundCategories.body',
     sounds: [
-      { id: 'heartbeat', nameKey: 'soundNames.heartbeat', url: `${S3}/batimentos.mp3.mp3`, isPremium: false, emoji: '❤️', categoryId: 'body' },
-      { id: 'breathing', nameKey: 'soundNames.guidedBreathing', url: `${S3}/vento-suave.mp3.mp3`, isPremium: true, emoji: '🫁', categoryId: 'body' },
-      { id: 'whale', nameKey: 'soundNames.humpbackWhale', url: `${S3}/ondas-mar.mp3.mp3`, isPremium: true, emoji: '🐋', categoryId: 'body' },
-      { id: 'birds_dawn', nameKey: 'soundNames.dawnBirds', url: `${S3}/floresta-noite.mp3.mp3`, isPremium: true, emoji: '🐦', categoryId: 'body' },
+      { id: 'heartbeat',  nameKey: 'soundNames.heartbeat',       url: `${S3_FREE}/batimentos.mp3.mp3`,           isPremium: false, emoji: '❤️', categoryId: 'body' },
+      { id: 'breathing',  nameKey: 'soundNames.guidedBreathing', url: `${S3_PREMIUM}/respiracao-guiada.mp3.mp3`, isPremium: true,  emoji: '🫁', categoryId: 'body' },
+      { id: 'whale',      nameKey: 'soundNames.humpbackWhale',   url: `${S3_PREMIUM}/baleia.mp3.mp3`,            isPremium: true,  emoji: '🐋', categoryId: 'body' },
+      { id: 'birds_dawn', nameKey: 'soundNames.dawnBirds',       url: `${S3_PREMIUM}/passaros-manha.mp3.mp3`,    isPremium: true,  emoji: '🐦', categoryId: 'body' },
     ],
   },
   {
     id: 'special', nameKey: 'soundCategories.special',
     sounds: [
-      { id: 'hz432', nameKey: 'soundNames.hz432', url: `${S3}/ruido-branco.mp3.mp3`, isPremium: true, emoji: '🎵', categoryId: 'special' },
-      { id: 'binaural', nameKey: 'soundNames.binauralDelta', url: `${S3}/ruido-branco.mp3.mp3`, isPremium: true, emoji: '🌊', categoryId: 'special' },
-      { id: 'tibetan', nameKey: 'soundNames.tibetanBowls', url: `${S3}/batimentos.mp3.mp3`, isPremium: true, emoji: '🔔', categoryId: 'special' },
-      { id: 'amazon', nameKey: 'soundNames.amazonBirds', url: `${S3}/floresta-noite.mp3.mp3`, isPremium: true, emoji: '🦜', categoryId: 'special' },
+      { id: 'hz432',    nameKey: 'soundNames.hz432',         url: `${S3_PREMIUM}/432hz.mp3.mp3`,             isPremium: true, emoji: '🎵', categoryId: 'special' },
+      { id: 'binaural', nameKey: 'soundNames.binauralDelta', url: `${S3_PREMIUM}/binaural-delta.mp3.mp3`,    isPremium: true, emoji: '🌊', categoryId: 'special' },
+      { id: 'tibetan',  nameKey: 'soundNames.tibetanBowls',  url: `${S3_PREMIUM}/tibetan-bowls.mp3.mp3`,     isPremium: true, emoji: '🔔', categoryId: 'special' },
+      { id: 'amazon',   nameKey: 'soundNames.amazonBirds',   url: `${S3_PREMIUM}/passaros-amazonia.mp3.mp3`, isPremium: true, emoji: '🦜', categoryId: 'special' },
     ],
   },
 ];
