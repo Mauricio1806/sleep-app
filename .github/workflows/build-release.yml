@@ -39,6 +39,18 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/sona-release.keystore
 
+      - name: Create gradle.properties with signing config
+        run: |
+          cat >> android/gradle.properties << 'EOF'
+          MYAPP_UPLOAD_STORE_FILE=sona-release.keystore
+          MYAPP_UPLOAD_KEY_ALIAS=sona-key
+          EOF
+          printf 'MYAPP_UPLOAD_STORE_PASSWORD=%s\n' "$KEYSTORE_PASSWORD" >> android/gradle.properties
+          printf 'MYAPP_UPLOAD_KEY_PASSWORD=%s\n' "$KEY_PASSWORD" >> android/gradle.properties
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
       - name: Grant gradlew permission
         run: chmod +x android/gradlew
 
@@ -47,14 +59,11 @@ jobs:
           cd android
           ./gradlew assembleRelease \
             -PreactNativeArchitectures=arm64-v8a,armeabi-v7a \
-            -PMYAPP_UPLOAD_STORE_FILE=sona-release.keystore \
-            -PMYAPP_UPLOAD_KEY_ALIAS=sona-key \
-            -PMYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }} \
-            -PMYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
+            --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: android/app/build/outputs/apk/release/app-release.apk
-          retention-days: 14
+          retention-days: 7
