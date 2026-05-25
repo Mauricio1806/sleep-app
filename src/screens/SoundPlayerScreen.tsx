@@ -99,7 +99,6 @@ export function SoundPlayerScreen() {
   useEffect(() => {
     trackScreen('SoundPlayer');
     return () => { stopCurrent(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useFocusEffect(useCallback(() => {
@@ -209,7 +208,7 @@ export function SoundPlayerScreen() {
                   onPress={() => handlePress(b)}
                 />
               ) : (
-                <View style={{ flex: 1 }} />
+                <View style={styles.flex1} />
               )}
             </View>
           ))}
@@ -239,4 +238,5 @@ const styles = StyleSheet.create({
   catLabelActive: { color: colors.primaryLight, fontWeight: '600' },
   grid: { paddingHorizontal: spacing.lg, paddingBottom: spacing.sm, gap: spacing.sm },
   row: { flexDirection: 'row', gap: spacing.sm },
+  flex1: { flex: 1 },
 });

@@ -114,7 +114,7 @@ export function ProfileScreen() {
               onPress={() => setLocale(lang.value)}
             >
               <Text style={styles.langFlag}>{lang.flag}</Text>
-              <View style={{ flex: 1 }}>
+              <View style={styles.flex1}>
                 <Text style={[styles.langLabel, locale === lang.value && styles.langLabelActive]}>{lang.label}</Text>
                 {locale === lang.value && (
                   <Text style={styles.langPrice}>{lang.price}</Text>
@@ -194,4 +194,5 @@ const styles = StyleSheet.create({
   linkRow: { paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.border },
   link: { ...typography.body, color: colors.textSecondary },
   version: { ...typography.label, color: colors.textMuted, marginTop: spacing.sm },
+  flex1: { flex: 1 },
 });

@@ -42,7 +42,7 @@ export function GoalsScreen({ navigation }: Props) {
   }, [headerOpacity, headerTranslate]);
 
   useEffect(() => {
-    void storageService.saveOnboardingDraft({ goals: selected });
+    storageService.saveOnboardingDraft({ goals: selected });
   }, [selected]);
 
   function toggle(id: string) {
@@ -72,7 +72,7 @@ export function GoalsScreen({ navigation }: Props) {
           {pairs.map(([a, b], idx) => (
             <View key={idx} style={styles.row}>
               <GoalCard goal={a} selected={selected.includes(a.id)} onPress={() => toggle(a.id)} delay={idx * 80} />
-              {b ? <GoalCard goal={b} selected={selected.includes(b.id)} onPress={() => toggle(b.id)} delay={idx * 80 + 40} /> : <View style={{ flex: 1 }} />}
+              {b ? <GoalCard goal={b} selected={selected.includes(b.id)} onPress={() => toggle(b.id)} delay={idx * 80 + 40} /> : <View style={styles.flex1} />}
             </View>
           ))}
         </View>
@@ -88,4 +88,5 @@ const styles = StyleSheet.create({
   subtitle: { ...typography.body, color: colors.textSecondary },
   grid: { gap: spacing.sm },
   row: { flexDirection: 'row', gap: spacing.sm },
+  flex1: { flex: 1 },
 });

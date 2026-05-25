@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { sharedStyles } from '../../theme';
 
 interface ProgressDotsProps {
@@ -17,4 +17,3 @@ export function ProgressDots({ current, total }: ProgressDotsProps) {
   );
 }
 
-const _styles = StyleSheet.create({});

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useContext, useState } from 'react';
-import { View, Text, ScrollView, Animated, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, Animated, StyleSheet, SafeAreaView } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { colors, spacing, typography, sharedStyles, radius } from '../../theme';
 import { ProgressDots } from '../components/ProgressDots';
@@ -50,7 +50,7 @@ export function AIPlanScreen({ navigation }: Props) {
   useEffect(() => {
     if (plan) {
       setPlan(plan);
-      void storageService.clearOnboardingDraft();
+      storageService.clearOnboardingDraft();
       Animated.timing(planOpacity, { toValue: 1, duration: 500, useNativeDriver: true }).start();
     }
   }, [plan, setPlan, planOpacity]);

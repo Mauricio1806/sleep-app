@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useContext } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Animated, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, StyleSheet, SafeAreaView } from 'react-native';
 import { colors, spacing, typography, sharedStyles, radius } from '../../theme';
 import { SleepScoreCircle } from '../components/SleepScoreCircle';
 import { ProfileContext } from '../context/ProfileContext';
@@ -10,7 +10,7 @@ import { getRelativeDay } from '../utils/dateHelpers';
 
 export function HomeScreen() {
   const { t } = useTranslation();
-  const { plan, settings } = useContext(ProfileContext);
+  const { plan } = useContext(ProfileContext);
   const { records, weeklySummary } = useSleepData();
   const fadeAnim = useRef(new Animated.Value(0)).current;
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useContext, useState } from 'react';
-import { View, Text, ScrollView, Animated, StyleSheet, SafeAreaView } from 'react-native';
+import { Text, ScrollView, Animated, StyleSheet, SafeAreaView } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { colors, spacing, typography, sharedStyles } from '../../theme';
 import { ProgressDots } from '../components/ProgressDots';
@@ -83,7 +83,7 @@ export function SleepProfileScreen({ navigation }: Props) {
 
   useEffect(() => {
     if (!draftLoaded.current) return;
-    void storageService.saveOnboardingDraft({ bedtime, wakeTime, tiredness, stressLevel, caffeine: caffeine ?? undefined, screenTime: screenTime as SleepProfile['screenTime'] || undefined });
+    storageService.saveOnboardingDraft({ bedtime, wakeTime, tiredness, stressLevel, caffeine: caffeine ?? undefined, screenTime: screenTime as SleepProfile['screenTime'] || undefined });
   }, [bedtime, wakeTime, tiredness, stressLevel, caffeine, screenTime]);
 
   const isValid = tiredness > 0 && stressLevel > 0 && caffeine !== null && screenTime !== '';

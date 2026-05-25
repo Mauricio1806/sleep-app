@@ -12,11 +12,6 @@ interface SleepScoreCircleProps {
 export function SleepScoreCircle({ score, size = 140 }: SleepScoreCircleProps) {
   const animScore = useRef(new Animated.Value(0)).current;
   const radius = (size - 16) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = animScore.interpolate({
-    inputRange: [0, 100],
-    outputRange: [circumference, 0],
-  });
   const scoreColor = getScoreColor(score);
   const label = getScoreLabel(score);
 

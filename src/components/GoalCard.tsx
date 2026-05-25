@@ -31,7 +31,7 @@ export function GoalCard({ goal, selected, onPress, delay }: GoalCardProps) {
   }
 
   return (
-    <Animated.View style={{ opacity, transform: [{ translateY }, { scale }], flex: 1 }}>
+    <Animated.View style={[{ opacity, transform: [{ translateY }, { scale }] }, styles.flex1]}>
       <TouchableOpacity
         style={[styles.card, selected && styles.cardSelected]}
         onPress={handlePress}
@@ -59,4 +59,5 @@ const styles = StyleSheet.create({
   title: { ...typography.bodySmall, color: colors.textPrimary, fontWeight: '600', marginBottom: spacing.xs },
   titleSelected: { color: colors.primaryLight },
   desc: { ...typography.label, color: colors.textMuted, lineHeight: 16 },
+  flex1: { flex: 1 },
 });
