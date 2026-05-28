@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Sound from 'react-native-sound';
@@ -28,7 +28,7 @@ const CATEGORIES: SoundCategory[] = [
       { id: 'forest',   nameKey: 'soundNames.forestNight',    url: `${S3_FREE}/floresta-noite.mp3.mp3`,     isPremium: false, emoji: '🌲', categoryId: 'nature' },
       { id: 'ocean',    nameKey: 'soundNames.oceanWaves',     url: `${S3_FREE}/ondas-mar.mp3.mp3`,          isPremium: false, emoji: '🌊', categoryId: 'nature' },
       { id: 'thunder',  nameKey: 'soundNames.distantThunder', url: `${S3_PREMIUM}/trovao.mp3.mp3`,          isPremium: true,  emoji: '⛈️', categoryId: 'nature' },
-      { id: 'river',    nameKey: 'soundNames.mountainRiver',  url: `${S3_PREMIUM}/rio-montanha.mp3.mp3`,    isPremium: true,  emoji: '🏔️', categoryId: 'nature' },
+      { id: 'river',    nameKey: 'soundNames.mountainRiver',  url: `${S3_PREMIUM}/rio-montanha.mp3.mp3`,    isPremium: true,  emoji: '⛰️', categoryId: 'nature' },
       { id: 'tropical', nameKey: 'soundNames.tropicalForest', url: `${S3_PREMIUM}/floresta-tropical.mp3.mp3`, isPremium: true, emoji: '🌴', categoryId: 'nature' },
     ],
   },
@@ -48,7 +48,7 @@ const CATEGORIES: SoundCategory[] = [
       { id: 'rain_window', nameKey: 'soundNames.rainWindow',      url: `${S3_FREE}/chuva-janela.mp3.mp3`,      isPremium: false, emoji: '🪟', categoryId: 'asmr' },
       { id: 'whispers',    nameKey: 'soundNames.gentleWhispers',  url: `${S3_PREMIUM}/sussurros.mp3.mp3`,      isPremium: true,  emoji: '🤫', categoryId: 'asmr' },
       { id: 'book_pages',  nameKey: 'soundNames.bookPages',       url: `${S3_PREMIUM}/paginas-livro.mp3.mp3`,  isPremium: true,  emoji: '📖', categoryId: 'asmr' },
-      { id: 'handwriting', nameKey: 'soundNames.handwriting',     url: `${S3_PREMIUM}/escrita-mao.mp3.mp3`,    isPremium: true,  emoji: '✍️', categoryId: 'asmr' },
+      { id: 'handwriting', nameKey: 'soundNames.handwriting',     url: `${S3_PREMIUM}/escrita-mao.mp3.mp3`,    isPremium: true,  emoji: '✏️', categoryId: 'asmr' },
       { id: 'tapping',     nameKey: 'soundNames.gentleTapping',   url: `${S3_PREMIUM}/tapping.mp3.mp3`,        isPremium: true,  emoji: '🫧', categoryId: 'asmr' },
     ],
   },
@@ -93,6 +93,7 @@ export function SoundPlayerScreen() {
   const [timer, setTimer] = useState(0);
   const [volumeIndex, setVolumeIndex] = useState(3);
   const soundRef = useRef<Sound | null>(null);
+  const isLoadingRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const catScrollRef = useRef<ScrollView>(null);
 
@@ -117,15 +118,25 @@ export function SoundPlayerScreen() {
     setIsPlaying(false);
   }
 
-  function stopCurrent() {
+  function stopCurrent(callback?: () => void) {
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
-    if (soundRef.current) { soundRef.current.stop(); soundRef.current.release(); soundRef.current = null; }
+    if (soundRef.current) {
+      soundRef.current.stop(() => {
+        soundRef.current?.release();
+        soundRef.current = null;
+        callback?.();
+      });
+    } else {
+      callback?.();
+    }
     setIsPlaying(false);
     setCurrentId(null);
   }
 
   function handlePress(sound: SoundOption) {
     if (sound.isPremium) return;
+    if (isLoadingRef.current) return;
+
     if (currentId === sound.id) {
       if (isPlaying) {
         pauseCurrent();
@@ -136,16 +147,20 @@ export function SoundPlayerScreen() {
       }
       return;
     }
-    stopCurrent();
-    const s = new Sound(sound.url, '', (error) => {
-      if (error) { setCurrentId(sound.id); setIsPlaying(false); return; }
-      s.setNumberOfLoops(-1);
-      s.setVolume(VOLUME_STEPS[volumeIndex]);
-      s.play((success) => { if (!success) { setIsPlaying(false); setCurrentId(null); } });
-      soundRef.current = s;
-      setCurrentId(sound.id);
-      setIsPlaying(true);
-      if (timer > 0) { timerRef.current = setTimeout(stopCurrent, timer * 60 * 1000); }
+
+    isLoadingRef.current = true;
+    stopCurrent(() => {
+      const s = new Sound(sound.url, '', (error) => {
+        isLoadingRef.current = false;
+        if (error) { setCurrentId(sound.id); setIsPlaying(false); return; }
+        s.setNumberOfLoops(-1);
+        s.setVolume(VOLUME_STEPS[volumeIndex]);
+        s.play((success) => { if (!success) { setIsPlaying(false); setCurrentId(null); } });
+        soundRef.current = s;
+        setCurrentId(sound.id);
+        setIsPlaying(true);
+        if (timer > 0) { timerRef.current = setTimeout(stopCurrent, timer * 60 * 1000); }
+      });
     });
   }
 
