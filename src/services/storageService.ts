@@ -1,7 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+﻿import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SleepProfile, SleepPlan, SleepRecord, UserSettings, WeeklySummary, MemoryIntention } from '../types';
 import { STORAGE_KEYS } from '../config/constants';
 import { calculateSleepScore, calculateSleepDuration, getWeeklyAverage } from '../utils/sleepCalculations';
+import { generateSleepPlan } from './claudeService';
 
 // TODO-AWS: Substituir cada função por chamadas ao Supabase após migração
 
@@ -23,6 +24,22 @@ export async function getSleepPlan(): Promise<SleepPlan | null> {
   const raw = await AsyncStorage.getItem(STORAGE_KEYS.PLAN);
   if (!raw) return null;
   return JSON.parse(raw) as SleepPlan;
+}
+
+export async function getSleepPlanOrRenew(profile: SleepProfile): Promise<SleepPlan | null> {
+  const plan = await getSleepPlan();
+  if (!plan) return null;
+  const daysSinceStart = Math.ceil((Date.now() - new Date(plan.generatedAt).getTime()) / 86400000);
+  if (daysSinceStart >= 14) {
+    try {
+      const newPlan = await generateSleepPlan(profile);
+      await saveSleepPlan(newPlan);
+      return newPlan;
+    } catch {
+      return plan;
+    }
+  }
+  return plan;
 }
 
 export async function saveSleepRecord(record: SleepRecord): Promise<void> {

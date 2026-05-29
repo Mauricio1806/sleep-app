@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
+﻿import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { SleepProfile, SleepPlan, UserSettings } from '../types';
 import * as storageService from '../services/storageService';
 
@@ -40,12 +40,12 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     Promise.all([
       storageService.getProfile(),
-      storageService.getSleepPlan(),
       storageService.getSettings(),
-    ]).then(([p, pl, s]) => {
+    ]).then(async ([p, s]) => {
       if (p) setProfileState(p);
-      if (pl) setPlanState(pl);
       if (s) setSettingsState(s);
+      const pl = p ? await storageService.getSleepPlanOrRenew(p) : await storageService.getSleepPlan();
+      if (pl) setPlanState(pl);
       setIsLoading(false);
     });
   }, []);
