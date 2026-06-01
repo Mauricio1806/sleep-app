@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Sound from 'react-native-sound';
 import { colors, spacing, typography, sharedStyles, radius } from '../../theme';
@@ -90,10 +90,12 @@ export function SoundPlayerScreen() {
   const [activeCat, setActiveCat] = useState(CATEGORIES[0].id);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoadingSound, setIsLoadingSound] = useState(false);
   const [timer, setTimer] = useState(0);
   const [volumeIndex, setVolumeIndex] = useState(3);
   const soundRef = useRef<Sound | null>(null);
   const isLoadingRef = useRef(false);
+  const loadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const catScrollRef = useRef<ScrollView>(null);
 
@@ -116,6 +118,12 @@ export function SoundPlayerScreen() {
   function pauseCurrent() {
     if (soundRef.current) { soundRef.current.pause(); }
     setIsPlaying(false);
+  }
+
+  function clearLoadingState() {
+    isLoadingRef.current = false;
+    setIsLoadingSound(false);
+    if (loadingTimeoutRef.current) { clearTimeout(loadingTimeoutRef.current); loadingTimeoutRef.current = null; }
   }
 
   function stopCurrent(callback?: () => void) {
@@ -149,15 +157,20 @@ export function SoundPlayerScreen() {
     }
 
     isLoadingRef.current = true;
+    setIsLoadingSound(true);
+    setCurrentId(sound.id);
+
+    // fallback: libera o lock após 5s no pior caso
+    loadingTimeoutRef.current = setTimeout(() => { clearLoadingState(); }, 5000);
+
     stopCurrent(() => {
       const s = new Sound(sound.url, '', (error) => {
-        isLoadingRef.current = false;
-        if (error) { setCurrentId(sound.id); setIsPlaying(false); return; }
+        clearLoadingState();
+        if (error) { setIsPlaying(false); setCurrentId(null); return; }
         s.setNumberOfLoops(-1);
         s.setVolume(VOLUME_STEPS[volumeIndex]);
         s.play((success) => { if (!success) { setIsPlaying(false); setCurrentId(null); } });
         soundRef.current = s;
-        setCurrentId(sound.id);
         setIsPlaying(true);
         if (timer > 0) { timerRef.current = setTimeout(stopCurrent, timer * 60 * 1000); }
       });
@@ -187,6 +200,9 @@ export function SoundPlayerScreen() {
     <SafeAreaView style={sharedStyles.screen}>
       <View style={styles.container}>
         <Text style={styles.title}>{t('soundPlayer.title')}</Text>
+        {isLoadingSound && (
+          <ActivityIndicator size="small" color={colors.teal} style={styles.loader} />
+        )}
         <ScrollView
           ref={catScrollRef}
           horizontal
@@ -245,6 +261,7 @@ export function SoundPlayerScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   title: { ...typography.heading2, color: colors.textPrimary, paddingHorizontal: spacing.lg, paddingTop: spacing.md, marginBottom: spacing.sm },
+  loader: { position: 'absolute', top: spacing.md, right: spacing.lg, zIndex: 10 },
   catBar: { flexGrow: 0 },
   catBarContent: { paddingHorizontal: spacing.lg, gap: spacing.sm, paddingBottom: spacing.sm },
   catChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.bgCard },
