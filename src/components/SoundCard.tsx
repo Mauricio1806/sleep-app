@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React, { memo } from 'react';
 import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { SoundOption } from '../types';
 import { colors, spacing, radius, typography } from '../../theme';
@@ -11,7 +11,7 @@ interface SoundCardProps {
   onPress: () => void;
 }
 
-export function SoundCard({ sound, isLocked, isPlaying, onPress }: SoundCardProps) {
+export const SoundCard = memo(function SoundCard({ sound, isLocked, isPlaying, onPress }: SoundCardProps) {
   const { t } = useTranslation();
 
   return (
@@ -34,7 +34,7 @@ export function SoundCard({ sound, isLocked, isPlaying, onPress }: SoundCardProp
       ) : null}
     </TouchableOpacity>
   );
-}
+});
 
 const styles = StyleSheet.create({
   card: {
