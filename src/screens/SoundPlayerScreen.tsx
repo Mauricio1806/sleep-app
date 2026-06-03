@@ -111,11 +111,12 @@ export function SoundPlayerScreen() {
     });
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      // Para o som ativo e libera todos do cache
-      const active = activeIdRef.current ? cacheRef.current.get(activeIdRef.current) : null;
+      const cache = cacheRef.current;
+      const activeId = activeIdRef.current;
+      const active = activeId ? cache.get(activeId) : null;
       active?.stop();
-      cacheRef.current.forEach(s => s.release());
-      cacheRef.current.clear();
+      cache.forEach(s => s.release());
+      cache.clear();
     };
   }, []);
 
@@ -301,3 +302,4 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: spacing.sm },
   flex1: { flex: 1 },
 });
+
