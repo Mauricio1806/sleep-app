@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Sound from 'react-native-sound';
 import { colors, spacing, typography, sharedStyles, radius } from '../../theme';
@@ -84,109 +84,142 @@ const CATEGORIES: SoundCategory[] = [
 ];
 
 const ALL_SOUNDS = CATEGORIES.flatMap(c => c.sounds);
+const FREE_SOUNDS = ALL_SOUNDS.filter(s => !s.isPremium);
 
 export function SoundPlayerScreen() {
   const { t } = useTranslation();
   const [activeCat, setActiveCat] = useState(CATEGORIES[0].id);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoadingSound, setIsLoadingSound] = useState(false);
   const [timer, setTimer] = useState(0);
   const [volumeIndex, setVolumeIndex] = useState(3);
-  const soundRef = useRef<Sound | null>(null);
-  const isLoadingRef = useRef(false);
-  const loadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cacheRef = useRef<Map<string, Sound>>(new Map());
+  const activeIdRef = useRef<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const catScrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     trackScreen('SoundPlayer');
-    return () => { stopCurrent(); };
+    // Pre-carrega todos os sons gratuitos em background
+    FREE_SOUNDS.forEach(sound => {
+      const s = new Sound(sound.url, '', (error) => {
+        if (!error) {
+          s.setNumberOfLoops(-1);
+          cacheRef.current.set(sound.id, s);
+        }
+      });
+    });
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      // Para o som ativo e libera todos do cache
+      const active = activeIdRef.current ? cacheRef.current.get(activeIdRef.current) : null;
+      active?.stop();
+      cacheRef.current.forEach(s => s.release());
+      cacheRef.current.clear();
+    };
   }, []);
 
+  // Ao sair da tela: NÃO para o som (continua em background)
+  // Ao voltar: sincroniza o estado visual com o que está tocando
   useFocusEffect(useCallback(() => {
-    setActiveCat(CATEGORIES[0].id);
     catScrollRef.current?.scrollTo({ x: 0, animated: false });
-    return () => {
-      if (soundRef.current) {
-        soundRef.current.pause();
-        setIsPlaying(false);
+    // Sincroniza estado visual ao voltar para a tela
+    if (activeIdRef.current) {
+      const active = cacheRef.current.get(activeIdRef.current);
+      if (active) {
+        setCurrentId(activeIdRef.current);
+        setIsPlaying(active.isPlaying());
       }
-    };
-  }, []));
-
-  function pauseCurrent() {
-    if (soundRef.current) { soundRef.current.pause(); }
-    setIsPlaying(false);
-  }
-
-  function clearLoadingState() {
-    isLoadingRef.current = false;
-    setIsLoadingSound(false);
-    if (loadingTimeoutRef.current) { clearTimeout(loadingTimeoutRef.current); loadingTimeoutRef.current = null; }
-  }
-
-  function stopCurrent(callback?: () => void) {
-    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
-    if (soundRef.current) {
-      soundRef.current.stop(() => {
-        soundRef.current?.release();
-        soundRef.current = null;
-        callback?.();
-      });
-    } else {
-      callback?.();
     }
-    setIsPlaying(false);
-    setCurrentId(null);
-  }
+    return () => {};
+  }, []));
 
   function handlePress(sound: SoundOption) {
     if (sound.isPremium) return;
-    if (isLoadingRef.current) return;
 
-    if (currentId === sound.id) {
+    // Pausar/retomar o mesmo som
+    if (activeIdRef.current === sound.id) {
+      const active = cacheRef.current.get(sound.id);
+      if (!active) return;
       if (isPlaying) {
-        pauseCurrent();
+        active.pause();
+        setIsPlaying(false);
       } else {
-        soundRef.current?.play((success) => { if (!success) { setIsPlaying(false); setCurrentId(null); } });
+        active.play((success) => { if (!success) { setIsPlaying(false); } });
         setIsPlaying(true);
-        if (timer > 0) { timerRef.current = setTimeout(stopCurrent, timer * 60 * 1000); }
+        if (timer > 0) { timerRef.current = setTimeout(() => { active.stop(); setIsPlaying(false); setCurrentId(null); activeIdRef.current = null; }, timer * 60 * 1000); }
       }
       return;
     }
 
-    isLoadingRef.current = true;
-    setIsLoadingSound(true);
-    setCurrentId(sound.id);
+    // Para o som atual sem release (fica no cache)
+    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+    if (activeIdRef.current) {
+      cacheRef.current.get(activeIdRef.current)?.stop();
+    }
 
-    // fallback: libera o lock após 5s no pior caso
-    loadingTimeoutRef.current = setTimeout(() => { clearLoadingState(); }, 5000);
+    const cached = cacheRef.current.get(sound.id);
+    if (cached) {
+      // Som já no cache — toca imediatamente
+      cached.setVolume(VOLUME_STEPS[volumeIndex]);
+      cached.play((success) => { if (!success) { setIsPlaying(false); setCurrentId(null); activeIdRef.current = null; } });
+      activeIdRef.current = sound.id;
+      setCurrentId(sound.id);
+      setIsPlaying(true);
+      if (timer > 0) { timerRef.current = setTimeout(() => { cached.stop(); setIsPlaying(false); setCurrentId(null); activeIdRef.current = null; }, timer * 60 * 1000); }
+    } else {
+      // Som ainda carregando do S3 — mostra selecionado e aguarda
+      setCurrentId(sound.id);
+      activeIdRef.current = sound.id;
+      setIsPlaying(false);
+      const tryPlay = (attempts: number) => {
+        const s = cacheRef.current.get(sound.id);
+        if (s) {
+          s.setVolume(VOLUME_STEPS[volumeIndex]);
+          s.play((success) => { if (!success) { setIsPlaying(false); setCurrentId(null); activeIdRef.current = null; } });
+          setIsPlaying(true);
+          if (timer > 0) { timerRef.current = setTimeout(() => { s.stop(); setIsPlaying(false); setCurrentId(null); activeIdRef.current = null; }, timer * 60 * 1000); }
+        } else if (attempts > 0) {
+          setTimeout(() => tryPlay(attempts - 1), 500);
+        }
+      };
+      setTimeout(() => tryPlay(10), 300);
+    }
+  }
 
-    stopCurrent(() => {
-      const s = new Sound(sound.url, '', (error) => {
-        clearLoadingState();
-        if (error) { setIsPlaying(false); setCurrentId(null); return; }
-        s.setNumberOfLoops(-1);
-        s.setVolume(VOLUME_STEPS[volumeIndex]);
-        s.play((success) => { if (!success) { setIsPlaying(false); setCurrentId(null); } });
-        soundRef.current = s;
-        setIsPlaying(true);
-        if (timer > 0) { timerRef.current = setTimeout(stopCurrent, timer * 60 * 1000); }
-      });
-    });
+  function handlePlayPause() {
+    if (!activeIdRef.current) return;
+    const active = cacheRef.current.get(activeIdRef.current);
+    if (!active) return;
+    if (isPlaying) {
+      active.pause();
+      setIsPlaying(false);
+    } else {
+      active.play((success) => { if (!success) setIsPlaying(false); });
+      setIsPlaying(true);
+    }
   }
 
   function handleVolumeStep() {
     const next = (volumeIndex + 1) % VOLUME_STEPS.length;
     setVolumeIndex(next);
-    soundRef.current?.setVolume(VOLUME_STEPS[next]);
+    if (activeIdRef.current) {
+      cacheRef.current.get(activeIdRef.current)?.setVolume(VOLUME_STEPS[next]);
+    }
   }
 
   function handleTimerChange(value: number) {
     setTimer(value);
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
-    if (value > 0 && isPlaying) { timerRef.current = setTimeout(stopCurrent, value * 60 * 1000); }
+    if (value > 0 && isPlaying && activeIdRef.current) {
+      const id = activeIdRef.current;
+      timerRef.current = setTimeout(() => {
+        cacheRef.current.get(id)?.stop();
+        setIsPlaying(false);
+        setCurrentId(null);
+        activeIdRef.current = null;
+      }, value * 60 * 1000);
+    }
   }
 
   const category = CATEGORIES.find(c => c.id === activeCat) ?? CATEGORIES[0];
@@ -200,9 +233,6 @@ export function SoundPlayerScreen() {
     <SafeAreaView style={sharedStyles.screen}>
       <View style={styles.container}>
         <Text style={styles.title}>{t('soundPlayer.title')}</Text>
-        {isLoadingSound && (
-          <ActivityIndicator size="small" color={colors.teal} style={styles.loader} />
-        )}
         <ScrollView
           ref={catScrollRef}
           horizontal
@@ -249,7 +279,7 @@ export function SoundPlayerScreen() {
           isPlaying={isPlaying}
           volumeIndex={volumeIndex}
           timer={timer}
-          onPlayPause={() => currentId && handlePress(currentSound ?? ALL_SOUNDS[0])}
+          onPlayPause={handlePlayPause}
           onVolumeStep={handleVolumeStep}
           onTimerChange={handleTimerChange}
         />
@@ -261,7 +291,6 @@ export function SoundPlayerScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   title: { ...typography.heading2, color: colors.textPrimary, paddingHorizontal: spacing.lg, paddingTop: spacing.md, marginBottom: spacing.sm },
-  loader: { position: 'absolute', top: spacing.md, right: spacing.lg, zIndex: 10 },
   catBar: { flexGrow: 0 },
   catBarContent: { paddingHorizontal: spacing.lg, gap: spacing.sm, paddingBottom: spacing.sm },
   catChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.bgCard },
