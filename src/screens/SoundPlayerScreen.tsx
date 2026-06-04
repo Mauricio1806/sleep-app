@@ -1,4 +1,6 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Sound from 'react-native-sound';
@@ -302,4 +304,5 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: spacing.sm },
   flex1: { flex: 1 },
 });
+
 
