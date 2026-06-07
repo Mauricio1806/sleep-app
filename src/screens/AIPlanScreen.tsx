@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useContext, useState } from 'react';
+﻿import React, { useEffect, useRef, useContext, useState } from 'react';
 import { View, Text, Animated, StyleSheet, SafeAreaView } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { colors, spacing, typography, sharedStyles, radius } from '../../theme';
@@ -7,6 +7,7 @@ import { LoadingDots } from '../components/LoadingDots';
 import { InsightCard } from '../components/InsightCard';
 import { Button } from '../components/Button';
 import { ProfileContext } from '../context/ProfileContext';
+import { FREE_PLAN_DAYS } from '../config/constants';
 import { useAIPlan } from '../hooks/useAIPlan';
 import { useTranslation } from '../i18n';
 import { trackScreen, trackOnboardingStep } from '../services/analyticsService';
@@ -60,7 +61,7 @@ export function AIPlanScreen({ navigation }: Props) {
       <SafeAreaView style={sharedStyles.screen}>
         <ProgressDots current={3} total={4} />
         <View style={styles.centered}>
-          <Text style={styles.moonEmoji}>🌙</Text>
+          <Text style={styles.moonEmoji}>ðŸŒ™</Text>
           <LoadingDots />
           <Animated.Text style={[styles.loadingMsg, { opacity: msgOpacity }]}>
             {messages[msgIndex]}
@@ -79,7 +80,7 @@ export function AIPlanScreen({ navigation }: Props) {
       <SafeAreaView style={sharedStyles.screen}>
         <ProgressDots current={3} total={4} />
         <View style={styles.centered}>
-          <Text style={styles.moonEmoji}>😔</Text>
+          <Text style={styles.moonEmoji}>ðŸ˜”</Text>
           <Text style={styles.errorTitle}>{t('aiPlan.errorTitle')}</Text>
           <Text style={styles.errorSubtitle}>{errorMsg}</Text>
           <Button label={t('aiPlan.retryBtn')} onPress={() => profile && retryGeneration(profile)} />
@@ -88,7 +89,7 @@ export function AIPlanScreen({ navigation }: Props) {
     );
   }
 
-  const freeDays = plan.days.slice(0, 3);
+  const freeDays = plan.days.slice(0, FREE_PLAN_DAYS);
 
   return (
     <SafeAreaView style={sharedStyles.screen}>
@@ -102,29 +103,29 @@ export function AIPlanScreen({ navigation }: Props) {
           <Text style={styles.badgeText}>{t('aiPlan.planReady')}</Text>
         </View>
         <View style={sharedStyles.card}>
-          <Text style={styles.sectionLabel}>🤖 {t('aiPlan.summaryLabel')}</Text>
+          <Text style={styles.sectionLabel}>ðŸ¤– {t('aiPlan.summaryLabel')}</Text>
           <Text style={styles.summary}>{plan.summary}</Text>
         </View>
         <View style={[sharedStyles.card, styles.soundCard]}>
-          <Text style={styles.sectionLabel}>🎵 {t('aiPlan.soundLabel')}</Text>
+          <Text style={styles.sectionLabel}>ðŸŽµ {t('aiPlan.soundLabel')}</Text>
           <Text style={styles.soundName}>{plan.recommendedSound}</Text>
         </View>
         <Text style={styles.sectionTitle}>{t('aiPlan.firstDaysTitle')}</Text>
         {freeDays.map(day => (
           <View key={day.day} style={sharedStyles.card}>
             <Text style={styles.dayTitle}>
-              {t('aiPlan.dayLabel')} {day.day} — {day.focus}
+              {t('aiPlan.dayLabel')} {day.day} â€” {day.focus}
             </Text>
             {day.routine.map((step, i) => (
-              <Text key={i} style={styles.step}>• {step}</Text>
+              <Text key={i} style={styles.step}>â€¢ {step}</Text>
             ))}
             <View style={styles.techBadge}>
-              <Text style={styles.techText}>✨ {day.technique}</Text>
+              <Text style={styles.techText}>âœ¨ {day.technique}</Text>
             </View>
           </View>
         ))}
         <View style={styles.lockedCard}>
-          <Text style={styles.lockedText}>🔒 {t('aiPlan.lockedDays')}</Text>
+          <Text style={styles.lockedText}>ðŸ”’ {t('aiPlan.lockedDays')}</Text>
         </View>
         {plan.tips.length >= 2 && (
           <InsightCard insight={plan.tips[0]} tip={plan.tips[1]} />
@@ -160,3 +161,4 @@ const styles = StyleSheet.create({
   lockedCard: { borderWidth: 1, borderColor: colors.border, borderStyle: 'dashed', borderRadius: radius.lg, padding: spacing.md, alignItems: 'center' },
   lockedText: { ...typography.body, color: colors.textMuted },
 });
+
