@@ -158,7 +158,8 @@ const styles = StyleSheet.create({
   step: { ...typography.bodySmall, color: colors.textSecondary, lineHeight: 20 },
   techBadge: { marginTop: spacing.sm, backgroundColor: colors.primaryFaded, borderRadius: radius.sm, paddingHorizontal: spacing.sm, paddingVertical: 2, alignSelf: 'flex-start' },
   techText: { ...typography.label, color: colors.primaryLight },
-  lockedCard: { borderWidth: 1, borderColor: colors.border, borderStyle: 'dashed', borderRadius: radius.lg, padding: spacing.md, alignItems: 'center' },
-  lockedText: { ...typography.body, color: colors.textMuted },
+  lockedCard: { borderWidth: 1, borderColor: '#F5A623', borderStyle: 'dashed', borderRadius: radius.lg, padding: spacing.md, alignItems: 'center', backgroundColor: '#2A1F00' },
+  lockedText: { ...typography.body, color: '#F5A623', textAlign: 'center', fontWeight: '600' },
 });
+
 
