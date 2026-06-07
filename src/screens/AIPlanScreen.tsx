@@ -61,7 +61,7 @@ export function AIPlanScreen({ navigation }: Props) {
       <SafeAreaView style={sharedStyles.screen}>
         <ProgressDots current={3} total={4} />
         <View style={styles.centered}>
-          <Text style={styles.moonEmoji}>ðŸŒ™</Text>
+          <Text style={styles.moonEmoji}>🌙</Text>
           <LoadingDots />
           <Animated.Text style={[styles.loadingMsg, { opacity: msgOpacity }]}>
             {messages[msgIndex]}
@@ -80,7 +80,7 @@ export function AIPlanScreen({ navigation }: Props) {
       <SafeAreaView style={sharedStyles.screen}>
         <ProgressDots current={3} total={4} />
         <View style={styles.centered}>
-          <Text style={styles.moonEmoji}>ðŸ˜”</Text>
+          <Text style={styles.moonEmoji}>😔</Text>
           <Text style={styles.errorTitle}>{t('aiPlan.errorTitle')}</Text>
           <Text style={styles.errorSubtitle}>{errorMsg}</Text>
           <Button label={t('aiPlan.retryBtn')} onPress={() => profile && retryGeneration(profile)} />
@@ -103,29 +103,29 @@ export function AIPlanScreen({ navigation }: Props) {
           <Text style={styles.badgeText}>{t('aiPlan.planReady')}</Text>
         </View>
         <View style={sharedStyles.card}>
-          <Text style={styles.sectionLabel}>ðŸ¤– {t('aiPlan.summaryLabel')}</Text>
+          <Text style={styles.sectionLabel}>🤖 {t('aiPlan.summaryLabel')}</Text>
           <Text style={styles.summary}>{plan.summary}</Text>
         </View>
         <View style={[sharedStyles.card, styles.soundCard]}>
-          <Text style={styles.sectionLabel}>ðŸŽµ {t('aiPlan.soundLabel')}</Text>
+          <Text style={styles.sectionLabel}>🎵 {t('aiPlan.soundLabel')}</Text>
           <Text style={styles.soundName}>{plan.recommendedSound}</Text>
         </View>
         <Text style={styles.sectionTitle}>{t('aiPlan.firstDaysTitle')}</Text>
         {freeDays.map(day => (
           <View key={day.day} style={sharedStyles.card}>
             <Text style={styles.dayTitle}>
-              {t('aiPlan.dayLabel')} {day.day} â€” {day.focus}
+              {t('aiPlan.dayLabel')} {day.day} — {day.focus}
             </Text>
             {day.routine.map((step, i) => (
-              <Text key={i} style={styles.step}>â€¢ {step}</Text>
+              <Text key={i} style={styles.step}>• {step}</Text>
             ))}
             <View style={styles.techBadge}>
-              <Text style={styles.techText}>âœ¨ {day.technique}</Text>
+              <Text style={styles.techText}>✨ {day.technique}</Text>
             </View>
           </View>
         ))}
         <View style={styles.lockedCard}>
-          <Text style={styles.lockedText}>ðŸ”’ {t('aiPlan.lockedDays')}</Text>
+          <Text style={styles.lockedText}>🔒 {t('aiPlan.lockedDays')}</Text>
         </View>
         {plan.tips.length >= 2 && (
           <InsightCard insight={plan.tips[0]} tip={plan.tips[1]} />
@@ -161,5 +161,3 @@ const styles = StyleSheet.create({
   lockedCard: { borderWidth: 1, borderColor: '#F5A623', borderStyle: 'dashed', borderRadius: radius.lg, padding: spacing.md, alignItems: 'center', backgroundColor: '#2A1F00' },
   lockedText: { ...typography.body, color: '#F5A623', textAlign: 'center', fontWeight: '600' },
 });
-
-
