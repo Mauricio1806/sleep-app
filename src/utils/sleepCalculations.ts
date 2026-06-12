@@ -1,4 +1,4 @@
-import { SleepRecord, ScoreLabel } from '../types';
+﻿import { SleepRecord, ScoreLabel } from '../types';
 
 export function calculateSleepDuration(bedtime: string, wakeTime: string): number {
   const [bh, bm] = bedtime.split(':').map(Number);
@@ -25,10 +25,10 @@ export function calculateSleepScore(record: SleepRecord): number {
     durationScore = Math.max(60, 100 - ((duration - idealMax) / 60) * 10);
   }
 
-  const wakeupPenalty = Math.min(30, record.wakeups * 10);
-  const qualityBonus = (record.quality - 3) * 5;
-  const alcoholPenalty = record.hadAlcohol ? 8 : 0;
-  const caffeinePenalty = record.hadCaffeine ? 5 : 0;
+  const wakeupPenalty = record.wakeups === 0 ? 0 : record.wakeups === 1 ? 8 : record.wakeups === 2 ? 18 : record.wakeups === 3 ? 30 : Math.min(50, 30 + (record.wakeups - 3) * 8);
+  const qualityBonus = (record.quality - 3) * 12;
+  const alcoholPenalty = record.hadAlcohol ? 15 : 0;
+  const caffeinePenalty = record.hadCaffeine ? 12 : 0;
 
   const raw = durationScore - wakeupPenalty + qualityBonus - alcoholPenalty - caffeinePenalty;
   return Math.min(100, Math.max(0, Math.round(raw)));
@@ -36,15 +36,15 @@ export function calculateSleepScore(record: SleepRecord): number {
 
 export function getScoreLabel(score: number): ScoreLabel {
   if (score >= 85) return 'Excelente';
-  if (score >= 65) return 'Bom';
-  if (score >= 45) return 'Regular';
+  if (score >= 70) return 'Bom';
+  if (score >= 50) return 'Regular';
   return 'Ruim';
 }
 
 export function getScoreColor(score: number): string {
   if (score >= 85) return '#4DB8A4';
-  if (score >= 65) return '#7C6FF7';
-  if (score >= 45) return '#F0C070';
+  if (score >= 70) return '#7C6FF7';
+  if (score >= 50) return '#F0C070';
   return '#F07070';
 }
 
