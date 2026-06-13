@@ -1,5 +1,7 @@
-import React, { useEffect, useRef, useContext } from 'react';
+﻿import React, { useEffect, useRef, useContext } from 'react';
 import { View, Text, TouchableOpacity, Animated, StyleSheet, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { colors, spacing, typography, sharedStyles, radius } from '../../theme';
 import { SleepScoreCircle } from '../components/SleepScoreCircle';
 import { ProfileContext } from '../context/ProfileContext';
@@ -10,6 +12,7 @@ import { getRelativeDay } from '../utils/dateHelpers';
 
 export function HomeScreen() {
   const { t } = useTranslation();
+  const navigation = useNavigation<NativeStackNavigationProp<Record<string, undefined>>>();
   const { plan } = useContext(ProfileContext);
   const { records, weeklySummary } = useSleepData();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -59,22 +62,38 @@ export function HomeScreen() {
           </View>
         )}
         <View style={styles.actions}>
-          <TouchableOpacity style={[styles.actionCard, { backgroundColor: colors.tealFaded, borderColor: colors.teal }]}>
+          <TouchableOpacity
+            style={[styles.actionCard, { backgroundColor: colors.tealFaded, borderColor: colors.teal }]}
+            onPress={() => navigation.navigate('Sounds' as never)}
+            activeOpacity={0.8}
+          >
             <Text style={styles.actionEmoji}>🎵</Text>
             <Text style={[styles.actionLabel, { color: colors.teal }]}>{t('home.quickActionSound')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionCard, { backgroundColor: colors.primaryFaded, borderColor: colors.primary }]}>
+          <TouchableOpacity
+            style={[styles.actionCard, { backgroundColor: colors.primaryFaded, borderColor: colors.primary }]}
+            onPress={() => navigation.navigate('Memory' as never)}
+            activeOpacity={0.8}
+          >
             <Text style={styles.actionEmoji}>🧘</Text>
             <Text style={[styles.actionLabel, { color: colors.primaryLight }]}>{t('home.quickActionTechnique')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionCard, { backgroundColor: colors.bgSurface, borderColor: colors.border }]}>
+          <TouchableOpacity
+            style={[styles.actionCard, { backgroundColor: colors.bgSurface, borderColor: colors.border }]}
+            onPress={() => navigation.navigate('Tracker' as never)}
+            activeOpacity={0.8}
+          >
             <Text style={styles.actionEmoji}>📖</Text>
             <Text style={[styles.actionLabel, { color: colors.textSecondary }]}>{t('home.quickActionDiary')}</Text>
           </TouchableOpacity>
         </View>
       </Animated.ScrollView>
       <View style={styles.fab}>
-        <TouchableOpacity style={styles.fabBtn} activeOpacity={0.85}>
+        <TouchableOpacity
+          style={styles.fabBtn}
+          activeOpacity={0.85}
+          onPress={() => navigation.navigate('Tracker' as never)}
+        >
           <Text style={styles.fabText}>🌙 {t('home.startRoutine')}</Text>
         </TouchableOpacity>
       </View>

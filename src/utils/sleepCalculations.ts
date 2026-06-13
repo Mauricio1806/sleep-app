@@ -37,8 +37,8 @@ export function calculateSleepScore(record: SleepRecord): number {
 
   // 4. Hábitos (peso 15%) — começa em 100, cada vício derruba
   let habitsScore = 100;
-  if (record.hadAlcohol) habitsScore -= 50;
-  if (record.hadCaffeine) habitsScore -= 40;
+  if (record.hadAlcohol) habitsScore -= 70;
+  if (record.hadCaffeine) habitsScore -= 60;
   habitsScore = Math.max(0, habitsScore);
 
   const raw =
