@@ -14,23 +14,39 @@ export function calculateSleepDuration(bedtime: string, wakeTime: string): numbe
 export function calculateSleepScore(record: SleepRecord): number {
   const duration = record.durationMinutes || calculateSleepDuration(record.bedtime, record.wakeTime);
 
-  const idealMin = 420;
-  const idealMax = 540;
+  // Cada fator vira uma nota de 0-100, depois média ponderada.
+  // Assim TODO fator move o score de verdade.
+
+  // 1. Duração (peso 30%)
+  const idealMin = 420; // 7h
+  const idealMax = 540; // 9h
   let durationScore: number;
   if (duration >= idealMin && duration <= idealMax) {
     durationScore = 100;
   } else if (duration < idealMin) {
     durationScore = Math.max(0, (duration / idealMin) * 100);
   } else {
-    durationScore = Math.max(60, 100 - ((duration - idealMax) / 60) * 10);
+    durationScore = Math.max(50, 100 - ((duration - idealMax) / 60) * 15);
   }
 
-  const wakeupPenalty = record.wakeups === 0 ? 0 : record.wakeups === 1 ? 8 : record.wakeups === 2 ? 18 : record.wakeups === 3 ? 30 : Math.min(50, 30 + (record.wakeups - 3) * 8);
-  const qualityBonus = (record.quality - 3) * 12;
-  const alcoholPenalty = record.hadAlcohol ? 15 : 0;
-  const caffeinePenalty = record.hadCaffeine ? 12 : 0;
+  // 2. Despertares (peso 30%) — 0=100, 1=80, 2=55, 3=30, 4+=10
+  const wakeupScore = record.wakeups === 0 ? 100 : record.wakeups === 1 ? 80 : record.wakeups === 2 ? 55 : record.wakeups === 3 ? 30 : Math.max(0, 10 - (record.wakeups - 4) * 5);
 
-  const raw = durationScore - wakeupPenalty + qualityBonus - alcoholPenalty - caffeinePenalty;
+  // 3. Qualidade subjetiva (peso 25%) — escala 1-5 vira 20-100
+  const qualityScore = (record.quality / 5) * 100;
+
+  // 4. Hábitos (peso 15%) — começa em 100, cada vício derruba
+  let habitsScore = 100;
+  if (record.hadAlcohol) habitsScore -= 50;
+  if (record.hadCaffeine) habitsScore -= 40;
+  habitsScore = Math.max(0, habitsScore);
+
+  const raw =
+    durationScore * 0.30 +
+    wakeupScore * 0.30 +
+    qualityScore * 0.25 +
+    habitsScore * 0.15;
+
   return Math.min(100, Math.max(0, Math.round(raw)));
 }
 
